@@ -6,7 +6,7 @@
 
 namespace dae
 {
-    class GameObject
+    class GameObject final
     {
     public:
         GameObject() = default;
