@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Scene.h"
+#include <cassert>
 
 using namespace dae;
 
@@ -26,11 +27,19 @@ void Scene::RemoveAll()
 	m_objects.clear();
 }
 
-void Scene::Update()
+void Scene::Update(float delta_sec)
 {
 	for(auto& object : m_objects)
 	{
-		object->Update();
+		object->Update(delta_sec);
+	}
+}
+
+void dae::Scene::FixedUpdate(float Fixed_sec)
+{
+	for (auto& object : m_objects)
+	{
+		object->FixedUpdate(Fixed_sec);
 	}
 }
 

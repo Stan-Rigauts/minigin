@@ -1,24 +1,33 @@
-#include <string>
 #include "GameObject.h"
-#include "ResourceManager.h"
-#include "Renderer.h"
 
-dae::GameObject::~GameObject() = default;
-
-void dae::GameObject::Update(){}
-
-void dae::GameObject::Render() const
+namespace dae
 {
-	const auto& pos = m_transform.GetPosition();
-	Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
-}
+    GameObject::~GameObject() = default;
 
-void dae::GameObject::SetTexture(const std::string& filename)
-{
-	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
-}
+    void GameObject::AddComponent(std::unique_ptr<Component> component)
+    {
+        component->SetOwner(this);
+        m_Components.push_back(std::move(component));
+    }
 
-void dae::GameObject::SetPosition(float x, float y)
-{
-	m_transform.SetPosition(x, y, 0.0f);
+    void GameObject::RemoveComponent(Component* component)
+    {
+        auto it = std::remove_if(
+            m_Components.begin(),
+            m_Components.end(),
+            [component](const std::unique_ptr<Component>& c) { return c.get() == component; });
+        m_Components.erase(it, m_Components.end());
+    }
+
+    void GameObject::Update(float delta_sec)
+    {
+        for (auto& comp : m_Components)
+            comp->Update(delta_sec);
+    }
+
+    void GameObject::FixedUpdate(float /*fixed_sec*/) {}
+    void GameObject::Render() const {
+        for (auto& comp : m_Components)
+            comp->Render();
+    }
 }
