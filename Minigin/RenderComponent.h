@@ -13,9 +13,9 @@ namespace dae
     class RenderComponent final : public Component
     {
     public:
-        explicit RenderComponent(GameObject* owner)
+        RenderComponent(GameObject& owner)
+            : Component(owner)
         {
-            SetOwner(owner);
         }
 
         void SetTexture(const std::string& filename)
@@ -28,7 +28,7 @@ namespace dae
             if (!m_texture)
                 return;
 
-            auto transform = GetOwner()->GetComponent<Transform>();
+            auto transform = GetOwner().GetComponent<Transform>();
             if (!transform)
                 return;
 
@@ -39,4 +39,4 @@ namespace dae
     private:
         std::shared_ptr<Texture2D> m_texture{};
     };
-} // end namespace dae
+}

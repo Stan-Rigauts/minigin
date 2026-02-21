@@ -1,14 +1,20 @@
 #include "GameObject.h"
-
+#include "cassert"
 namespace dae
 {
     GameObject::~GameObject() = default;
 
     void GameObject::AddComponent(std::unique_ptr<Component> component)
     {
-        component->SetOwner(this);
-        m_Components.push_back(std::move(component));
+        assert(component != nullptr);
+
+        // Ensure the component actually belongs to THIS object
+        assert(&component->GetOwner() == this &&
+            "Component owner does not match this GameObject!");
+
+        m_Components.emplace_back(std::move(component));
     }
+
 
     void GameObject::RemoveComponent(Component* component)
     {
@@ -25,7 +31,8 @@ namespace dae
             comp->Update(delta_sec);
     }
 
-    void GameObject::FixedUpdate(float /*fixed_sec*/) {}
+    void GameObject::FixedUpdate(float) {}
+
     void GameObject::Render() const {
         for (auto& comp : m_Components)
             comp->Render();

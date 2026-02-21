@@ -8,11 +8,17 @@
 #include "Transform.h"
 
 
-dae::TextComponent::TextComponent(const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
-	: m_needsUpdate(true), m_text(text), m_color(color), m_font(std::move(font)), m_textTexture(nullptr)
-{ }
+dae::TextComponent::TextComponent(GameObject& owner,const std::string& text,std::shared_ptr<Font> font,const SDL_Color& color)
+	: Component(owner)            
+	, m_needsUpdate(true)
+	, m_text(text)
+	, m_color(color)
+	, m_font(std::move(font))
+	, m_textTexture(nullptr)
+{
+}
 
-void dae::TextComponent::Update(float /*delta_sec*/)
+void dae::TextComponent::Update(float)
 {
 	if (m_needsUpdate)
 	{
@@ -38,7 +44,7 @@ void dae::TextComponent::Render() const
 	if (!m_textTexture)
 		return;
 
-	auto transform = GetOwner()->GetComponent<Transform>();
+	auto transform = GetOwner().GetComponent<Transform>();
 	if (!transform)
 		return;
 

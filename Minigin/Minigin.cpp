@@ -91,31 +91,46 @@ dae::Minigin::~Minigin()
 void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
+
 #ifndef __EMSCRIPTEN__
-	auto last_Time = std::chrono::high_resolution_clock::now();
-	float lag = 0.0f;
 	while (!m_quit)
 	{
-		const auto current_time = std::chrono::high_resolution_clock::now();
-		float delta_time = std::chrono::duration<float>(current_time - last_Time).count();
-		last_Time = current_time;
-		lag += delta_time;
-		float fixed_time_step = 1.0f / target_fps;
-
-		m_quit = !InputManager::GetInstance().ProcessInput();
-		while (lag >= fixed_time_step)
-		{
-
-			SceneManager::GetInstance().FixedUpdate(fixed_time_step);
-			lag -= fixed_time_step;
-		}
-		SceneManager::GetInstance().Update(delta_time);
-		Renderer::GetInstance().Render();
-
-		const auto sleep_time = current_time + std::chrono::milliseconds(ms_per_frame) - std::chrono::high_resolution_clock::now();
-		std::this_thread::sleep_for(sleep_time);
+		RunOneFrame();
 	}
 #else
 	emscripten_set_main_loop_arg(&LoopCallback, this, 0, true);
 #endif
 }
+void dae::Minigin::RunOneFrame()
+{
+	static auto last_time = std::chrono::high_resolution_clock::now();
+	static float lag = 0.0f;
+
+	const auto current_time = std::chrono::high_resolution_clock::now();
+	float delta_time = std::chrono::duration<float>(current_time - last_time).count();
+	last_time = current_time;
+	lag += delta_time;
+
+	float fixed_time_step = 1.0f / target_fps;
+
+	m_quit = !InputManager::GetInstance().ProcessInput();
+
+	while (lag >= fixed_time_step)
+	{
+		SceneManager::GetInstance().FixedUpdate(fixed_time_step);
+		lag -= fixed_time_step;
+	}
+
+	SceneManager::GetInstance().Update(delta_time);
+	Renderer::GetInstance().Render();
+
+	const auto sleep_time = current_time + std::chrono::milliseconds(ms_per_frame)
+		- std::chrono::high_resolution_clock::now();
+	std::this_thread::sleep_for(sleep_time);
+}
+#ifdef __EMSCRIPTEN__
+void dae::Minigin::LoopCallback(void* arg)
+{
+	static_cast<dae::Minigin*>(arg)->RunOneFrame();
+}
+#endif

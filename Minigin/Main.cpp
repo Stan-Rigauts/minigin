@@ -19,67 +19,82 @@ namespace fs = std::filesystem;
 
 static void load()
 {
+    // Get the scene
     auto& scene = dae::SceneManager::GetInstance().CreateScene();
 
+    // ======================
+    // Background GameObject
+    // ======================
     auto backgroundGO = std::make_unique<dae::GameObject>();
 
-    auto bgTransform = std::make_unique<dae::Transform>();
+    // Transform
+    auto bgTransform = std::make_unique<dae::Transform>(*backgroundGO);
     bgTransform->SetPosition(0, 0);
     backgroundGO->AddComponent(std::move(bgTransform));
 
-
-    auto bgRender = std::make_unique<dae::RenderComponent>(backgroundGO.get());
+    // Render Component
+    auto bgRender = std::make_unique<dae::RenderComponent>(*backgroundGO);
     bgRender->SetTexture("background.png");
     backgroundGO->AddComponent(std::move(bgRender));
 
+    // Add to scene
     scene.Add(std::move(backgroundGO));
 
+    // Logo GameObject
     auto logoGO = std::make_unique<dae::GameObject>();
 
-    auto logoTransform = std::make_unique<dae::Transform>();
+    auto logoTransform = std::make_unique<dae::Transform>(*logoGO);
     logoTransform->SetPosition(358, 180);
     logoGO->AddComponent(std::move(logoTransform));
 
-    auto logoRender = std::make_unique<dae::RenderComponent>(logoGO.get());
+    auto logoRender = std::make_unique<dae::RenderComponent>(*logoGO);
     logoRender->SetTexture("logo.png");
     logoGO->AddComponent(std::move(logoRender));
+
     scene.Add(std::move(logoGO));
 
+    // Text GameObject
     auto textGO = std::make_unique<dae::GameObject>();
 
-    auto textTransform = std::make_unique<dae::Transform>();
+    auto textTransform = std::make_unique<dae::Transform>(*textGO);
     textTransform->SetPosition(292, 20);
     textGO->AddComponent(std::move(textTransform));
-
 
     auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 
     auto textComponent = std::make_unique<dae::TextComponent>(
+        *textGO,                         // Owner
         "Programming 4 Assignment",
         font,
         SDL_Color{ 255, 255, 255, 255 }
     );
-
-
     textGO->AddComponent(std::move(textComponent));
 
     scene.Add(std::move(textGO));
 
+   
+    // FPS Display GameObject
+    auto fpsTextGO = std::make_unique<dae::GameObject>();
 
-    auto fpsText = std::make_unique<dae::GameObject>();
-    auto fpstextComponent = std::make_unique<dae::TextComponent>(
+    // Transform
+    auto fpsTransform = std::make_unique<dae::Transform>(*fpsTextGO);
+    fpsTransform->SetPosition(10, 10);
+    fpsTextGO->AddComponent(std::move(fpsTransform));
+
+    // FPS Text Component
+    auto fpsTextComponent = std::make_unique<dae::TextComponent>(
+        *fpsTextGO,
         "0 FPS",
         font,
         SDL_Color{ 255, 255, 255, 255 }
     );
+    fpsTextGO->AddComponent(std::move(fpsTextComponent));
 
-    fpsText->AddComponent(std::move(fpstextComponent));
-    auto fpsTransform = std::make_unique<dae::Transform>();
-    fpsTransform->SetPosition(10, 10);
-    fpsText->AddComponent(std::move(fpsTransform));
-    auto fpsTextComponent = std::make_unique<dae::FPSComponent>();
-    fpsText->AddComponent(std::move(fpsTextComponent));
-    scene.Add(std::move(fpsText));
+    // FPS Updater Component
+    auto fpsComponent = std::make_unique<dae::FPSComponent>(*fpsTextGO);
+    fpsTextGO->AddComponent(std::move(fpsComponent));
+
+    scene.Add(std::move(fpsTextGO));
 }
 
 int main(int, char*[]) {

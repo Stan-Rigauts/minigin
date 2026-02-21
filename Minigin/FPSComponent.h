@@ -9,12 +9,12 @@ namespace dae
     class FPSComponent final : public Component
     {
     public:
-        FPSComponent() = default;
+        FPSComponent(GameObject& owner);
 
         void Update(float delta_sec) override;
 
     private:
-        float m_accumulator{ 0.f };
-        int m_frameCount{ 0 };
+        float m_accumulator;
+        int m_frameCount;
     };
 }

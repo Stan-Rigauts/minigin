@@ -21,5 +21,9 @@ namespace dae
 		const int target_fps = 60;
 		const int ms_per_frame = 1000 / target_fps;  
 
+		void RunOneFrame();
+#ifdef __EMSCRIPTEN__
+		static void LoopCallback(void* arg);
+#endif
 	};
 }

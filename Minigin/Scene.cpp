@@ -12,14 +12,13 @@ void Scene::Add(std::unique_ptr<GameObject> object)
 
 void Scene::Remove(const GameObject& object)
 {
-	m_objects.erase(
-		std::remove_if(
-			m_objects.begin(),
-			m_objects.end(),
-			[&object](const auto& ptr) { return ptr.get() == &object; }
-		),
-		m_objects.end()
-	);
+	auto it = std::find_if(
+		m_objects.begin(),
+		m_objects.end(),
+		[&object](const auto& ptr) { return ptr.get() == &object; });
+
+	if (it != m_objects.end())
+		(*it)->MarkForDestroy();
 }
 
 void Scene::RemoveAll()
@@ -29,10 +28,19 @@ void Scene::RemoveAll()
 
 void Scene::Update(float delta_sec)
 {
-	for(auto& object : m_objects)
+	for (auto& object : m_objects)
 	{
 		object->Update(delta_sec);
 	}
+	m_objects.erase(
+		std::remove_if(
+			m_objects.begin(),
+			m_objects.end(),
+			[](const auto& obj)
+			{
+				return obj->IsMarkedForDestroy();
+			}),
+		m_objects.end());
 }
 
 void dae::Scene::FixedUpdate(float Fixed_sec)

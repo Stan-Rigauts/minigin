@@ -1,4 +1,5 @@
 #pragma once
+
 namespace dae
 {
     class GameObject;
@@ -8,15 +9,24 @@ namespace dae
     public:
         virtual ~Component() = default;
 
-        virtual void FixedUpdate(float /*Fixed_sec*/) {}
-        virtual void Update(float /*delta_sec*/) {}
-        virtual void Render() const {} 
+        Component(const Component&) = delete;
+        Component(Component&&) = delete;
+        Component& operator=(const Component&) = delete;
+        Component& operator=(Component&&) = delete;
 
-        void SetOwner(GameObject* owner) { m_Owner = owner; }
-        GameObject* GetOwner() const { return m_Owner; }
+        virtual void FixedUpdate(float) {}
+        virtual void Update(float) {}
+        virtual void Render() const {}
+
+        GameObject& GetOwner() const { return *m_pOwner; }
+
+    protected:
+        explicit Component(GameObject& owner)
+            : m_pOwner(&owner)
+        {
+        }
 
     private:
-        GameObject* m_Owner = nullptr;
+        GameObject* const m_pOwner;  
     };
-
 }
