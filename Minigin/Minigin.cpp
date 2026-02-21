@@ -32,11 +32,6 @@ void LogSDLVersion(const std::string& message, int major, int minor, int patch)
 
 #ifdef __EMSCRIPTEN__
 #include "emscripten.h"
-
-void LoopCallback(void* arg)
-{
-	static_cast<dae::Minigin*>(arg)->RunOneFrame();
-}
 #endif
 
 // Why bother with this? Because sometimes students have a different SDL version installed on their pc.
