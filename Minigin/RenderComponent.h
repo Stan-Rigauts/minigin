@@ -28,11 +28,8 @@ namespace dae
             if (!m_texture)
                 return;
 
-            auto transform = GetOwner().GetComponent<Transform>();
-            if (!transform)
-                return;
-
-            const auto& pos = transform->GetPosition();
+            auto pos = GetOwner().GetWorldPosition();
+            
             Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
         }
 

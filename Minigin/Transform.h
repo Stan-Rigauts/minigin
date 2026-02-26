@@ -1,17 +1,30 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "Component.h"
 
 namespace dae
 {
-	class Transform final : public Component
-	{
-	public:
-		Transform(GameObject& owner);
-		const glm::vec3& GetPosition() const { return m_position; }
-		void SetPosition(float x, float y, float z = 0);
-		void SetPosition(const glm::vec3& position);
-	private:
-		glm::vec3 m_position;
-	};
+    class Transform final
+    {
+    public:
+        Transform() = default;
+
+        void             SetLocalPosition(float x, float y, float z = 0.f);
+        void             SetLocalPosition(const glm::vec3& pos);
+        const glm::vec3& GetLocalPosition() const { return m_LocalPosition; }
+
+        const glm::vec3& GetWorldPosition();
+
+        void SetParentTransform(Transform* parent) { m_pParent = parent; SetPositionDirty(); }
+
+        void SetPositionDirty();
+
+    private:
+        void UpdateWorldPosition();
+
+        glm::vec3  m_LocalPosition{};
+        glm::vec3  m_WorldPosition{};
+        bool       m_PositionIsDirty{ true };
+
+        Transform* m_pParent{ nullptr };   
+    };
 }
