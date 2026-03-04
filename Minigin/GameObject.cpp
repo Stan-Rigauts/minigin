@@ -4,8 +4,10 @@
 
 namespace dae
 {
-  
-  
+    GameObject::GameObject()
+    {
+        m_Transform.SetOwner(this);
+    }
     GameObject::~GameObject()
     {
         if (m_pParent)
@@ -79,13 +81,11 @@ namespace dae
         if (m_pParent)
         {
             m_pParent->AddChild(this);
-            m_Transform.SetParentTransform(&m_pParent->GetTransform());
         }
-        else
-        {
-            m_Transform.SetParentTransform(nullptr);
-        }
+        m_Transform.SetPositionDirty();
+
     }
+
 
     void GameObject::AddChild(GameObject* child)
     {

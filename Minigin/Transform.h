@@ -1,12 +1,13 @@
 #pragma once
 #include <glm/glm.hpp>
-
+#include <memory>
 namespace dae
 {
+    class GameObject;
     class Transform final
     {
     public:
-        Transform() = default;
+        Transform()=default;
 
         void             SetLocalPosition(float x, float y, float z = 0.f);
         void             SetLocalPosition(const glm::vec3& pos);
@@ -14,9 +15,10 @@ namespace dae
 
         const glm::vec3& GetWorldPosition();
 
-        void SetParentTransform(Transform* parent) { m_pParent = parent; SetPositionDirty(); }
+        bool IsDirty() const { return m_PositionIsDirty; }
 
         void SetPositionDirty();
+        void SetOwner(GameObject* owner);
 
     private:
         void UpdateWorldPosition();
@@ -25,6 +27,6 @@ namespace dae
         glm::vec3  m_WorldPosition{};
         bool       m_PositionIsDirty{ true };
 
-        Transform* m_pParent{ nullptr };   
+        GameObject* m_pOwner{nullptr};
     };
 }

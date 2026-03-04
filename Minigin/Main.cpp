@@ -60,25 +60,27 @@ static void load()
 	scene.Add(std::move(fpsTextGO));
 
 
+	auto rotator = std::make_unique<dae::GameObject>();
+	rotator->SetLocalPosition(350, 300);
+
 	auto parent = std::make_unique<dae::GameObject>();
-	parent->SetLocalPosition(350, 300);                   
+	
+	parent->SetParent(rotator.get(), false);
 	auto parentRender = std::make_unique<dae::RenderComponent>(*parent);
 	parentRender->SetTexture("MSPAC.png");
 	parent->AddComponent(std::move(parentRender));
-	parent->AddComponent(std::make_unique<dae::RotatorComponent>(
-		*parent, 25.f, 2.f, glm::vec3{ 250, 300, 0 }      
-	));
+	parent->AddComponent(std::make_unique<dae::RotatorComponent>(*parent, 25.f, 3.f  ));
 
 	auto child = std::make_unique<dae::GameObject>();
-	child->SetParent(parent.get(), false);
-	child->SetLocalPosition(50, 0);                    
+	child->SetParent(parent.get(), false);                    
 	auto childRender = std::make_unique<dae::RenderComponent>(*child);
 	childRender->SetTexture("MSPAC.png");
 	child->AddComponent(std::move(childRender));
 	child->AddComponent(std::make_unique<dae::RotatorComponent>(
-		*child, 75.f, -3.f                               
+		*child, 75.f, -2.f                               
 	));
 
+	scene.Add(std::move(rotator));
 	scene.Add(std::move(parent));
 	scene.Add(std::move(child));
 }

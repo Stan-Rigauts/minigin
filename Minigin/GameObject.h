@@ -11,7 +11,7 @@ namespace dae
     class GameObject final
     {
     public:
-        GameObject() = default;
+        GameObject();
         ~GameObject();
 
         GameObject(const GameObject& other) = delete;
@@ -60,12 +60,8 @@ namespace dae
         GameObject* GetParent()              const { return m_pParent; }
         size_t      GetChildCount()          const { return m_pChildren.size(); }
         GameObject* GetChildAt(size_t index) const { return m_pChildren[index]; }
+        std::vector<GameObject*> GetChildren() const { return m_pChildren; }
 
-        
-        std::vector<GameObject*>::iterator       begin() { return m_pChildren.begin(); }
-        std::vector<GameObject*>::iterator       end() { return m_pChildren.end(); }
-        std::vector<GameObject*>::const_iterator begin() const { return m_pChildren.begin(); }
-        std::vector<GameObject*>::const_iterator end()   const { return m_pChildren.end(); }
 
     private:
     
