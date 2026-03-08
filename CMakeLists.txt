@@ -13,7 +13,6 @@ else()
   set(TARGET_PARAM WIN32)
 endif()
 
-# list source files here
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Minigin/Font.cpp
   Minigin/GameObject.cpp
@@ -24,10 +23,26 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Minigin/ResourceManager.cpp
   Minigin/Scene.cpp
   Minigin/SceneManager.cpp
-  "Minigin/TextComponent.cpp"
+  Minigin/TextComponent.cpp
   Minigin/Texture2D.cpp
   Minigin/Transform.cpp
- "Minigin/Component.h" "Minigin/RenderComponent.h" "Minigin/FPSComponent.h" "Minigin/FPSComponent.cpp" "Minigin/imgui_plot.cpp" "Minigin/CacheTrasher.cpp" "Minigin/imgui_plot.h")
+
+  Minigin/FPSComponent.cpp
+  Minigin/CacheTrasher.cpp
+  Minigin/ThrashTheCacheComponent.cpp
+
+  Minigin/MoveComponent.cpp 
+
+  Minigin/imgui_plot.cpp
+
+  # headers 
+  Minigin/Component.h
+  Minigin/RenderComponent.h
+  Minigin/FPSComponent.h
+  Minigin/imgui_plot.h
+  Minigin/Command.h
+ "Minigin/PlayerControllerComponent.h")
+
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
@@ -121,7 +136,7 @@ add_library(imgui STATIC
   ${imgui_SOURCE_DIR}/imgui_demo.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
- "Minigin/CacheTrasher.cpp" "Minigin/imgui_plot.h")
+  "Minigin/ThrashTheCacheComponent.cpp" "Minigin/Command.h" "Minigin/PlayerControllerComponent.h")
 
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
@@ -152,6 +167,7 @@ target_link_libraries("${TARGET_NAME}" PUBLIC
   SDL3_ttf::SDL3_ttf
   imgui
   ${VLD_LIBRARIES}
+  $<$<PLATFORM_ID:Windows>:xinput>
 )
 
 if(MSVC)

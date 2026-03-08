@@ -15,6 +15,9 @@
 #include "RotatorComponent.h"
 #include "Transform.h"
 #include "TextComponent.h"
+#include "ThrashTheCacheComponent.h"
+#include "PlayerControllerComponent.h"
+#include "MoveComponent.h"
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -80,9 +83,37 @@ static void load()
 		*child, 75.f, -2.f                               
 	));
 
+
+
+	// --- Create Player ---
+	auto player = std::make_unique<dae::GameObject>();
+
+	// Render
+	auto render = std::make_unique<dae::RenderComponent>(*player);
+	render->SetTexture("MSPAC.png");
+	player->AddComponent(std::move(render));
+
+	// MoveComponent
+	auto moveComp = std::make_unique<dae::MoveComponent>(*player, 200.f); // 200 units per second
+	player->AddComponent(std::move(moveComp));
+
+	// PlayerControllerComponent reads input and moves the player
+	player->AddComponent(std::make_unique<dae::PlayerControllerComponent>(*player));
+
+	// Add player to the scene
+	scene.Add(std::move(player));
+
+
+
+	//auto imguitrasher = std::make_unique<dae::GameObject>();
+	//auto trasher = std::make_unique<dae::ThrashTheCacheComponent>(*imguitrasher);
+	//imguitrasher->AddComponent(std::move(trasher));
+
+
 	scene.Add(std::move(rotator));
 	scene.Add(std::move(parent));
 	scene.Add(std::move(child));
+	//scene.Add(std::move(imguitrasher));
 }
 int main(int, char*[]) {
 #if __EMSCRIPTEN__

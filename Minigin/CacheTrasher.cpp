@@ -3,14 +3,14 @@
 #include <algorithm>
 #include <numeric>
 
-static constexpr size_t BUFFER_SIZE = 10000000;
+static constexpr size_t BUFFER_SIZE = 1000000;
 
 static float Average(std::vector<long long>& times)
 {
     if (times.empty())
         return 0.f;
 
-    double sum = 0;
+    float sum = 0;
     for (long long t : times)
         sum += t;
 
@@ -50,7 +50,7 @@ TimingResult CacheTrasher::RunExercise2_GameObject3D(int samples)
     TimingResult result;
     result.label = "GameObject3D (pointer chase)";
 
-    const size_t objectCount = BUFFER_SIZE / 16;
+    const size_t objectCount = BUFFER_SIZE ;
     std::vector<Transform>    transforms(objectCount);
     std::vector<GameObject3D> objects(objectCount);
 
@@ -69,7 +69,7 @@ TimingResult CacheTrasher::RunExercise2_GameObject3D(int samples)
             auto start = std::chrono::high_resolution_clock::now();
 
             for (size_t i = 0; i < objectCount; i += stepSize)
-                objects[i].local->matrix[0] *= 1.0f;
+                objects[i].local->matrix[0] *= 2.0f;
 
             auto end = std::chrono::high_resolution_clock::now();
             timingsForThisStep.push_back(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
@@ -86,7 +86,7 @@ TimingResult CacheTrasher::RunExercise2_GameObject3DAlt(int samples)
     TimingResult result;
     result.label = "GameObject3DAlt (direct transforms)";
 
-    const size_t objectCount = BUFFER_SIZE / 16;
+    const size_t objectCount = BUFFER_SIZE;
     std::vector<Transform>    transforms(objectCount);
     std::vector<GameObject3D> objects(objectCount);
 
@@ -105,7 +105,7 @@ TimingResult CacheTrasher::RunExercise2_GameObject3DAlt(int samples)
             auto start = std::chrono::high_resolution_clock::now();
 
             for (size_t i = 0; i < objectCount; i += stepSize)
-                transforms[i].matrix[0] *= 1.0f;
+                transforms[i].matrix[0] *= 2.0f;
 
             auto end = std::chrono::high_resolution_clock::now();
             timingsForThisStep.push_back(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
