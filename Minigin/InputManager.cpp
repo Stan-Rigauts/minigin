@@ -1,6 +1,7 @@
 #include "InputManager.h"
 #include <SDL3/SDL.h>
 #include <backends/imgui_impl_sdl3.h>
+#include <cmath>
 
 namespace dae
 {
@@ -55,11 +56,21 @@ namespace dae
 
         // SDL3
 
-        if (!m_SDLController && SDL_GetNumJoysticks() > 0)
+        if (!m_SDLController)
         {
-            if (SDL_IsGamepad(0))
-                m_SDLController = SDL_OpenGamepad(0);
+            int count = 0;
+            SDL_JoystickID* joysticks = SDL_GetJoysticks(&count);
+
+            if (count > 0)
+            {
+                if (SDL_IsGamepad(joysticks[0]))
+                    m_SDLController = SDL_OpenGamepad(joysticks[0]);
+            }
+
+            SDL_free(joysticks);
         }
+
+
 
         if (m_SDLController)
         {
@@ -81,7 +92,7 @@ namespace dae
         }
 
 #else
-       
+
         // XINPUT
         DWORD result = XInputGetState(0, &m_CurrentState);
         if (result != ERROR_SUCCESS)
