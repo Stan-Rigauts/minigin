@@ -1,8 +1,10 @@
 #pragma once
 #include "Singleton.h"
 #include "Command.h"
+#ifndef __EMSCRIPTEN__
 #include <windows.h>
 #include <Xinput.h>
+#endif
 #include <map>
 #include <memory>
 
