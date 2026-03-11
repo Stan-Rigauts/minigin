@@ -23,6 +23,7 @@ namespace dae
                 case SDL_SCANCODE_LEFT:  m_MoveLeft = true; break;
                 case SDL_SCANCODE_D:
                 case SDL_SCANCODE_RIGHT: m_MoveRight = true; break;
+                default: break;
                 }
             }
             if (e.type == SDL_EVENT_KEY_UP)
@@ -37,6 +38,7 @@ namespace dae
                 case SDL_SCANCODE_LEFT:  m_MoveLeft = false; break;
                 case SDL_SCANCODE_D:
                 case SDL_SCANCODE_RIGHT: m_MoveRight = false; break;
+                default: break;
                 }
             }
 
