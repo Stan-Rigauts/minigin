@@ -50,31 +50,32 @@ namespace dae
         m_CurrentState = {};
 
 #ifdef __EMSCRIPTEN__
-      
-        // SDL 
 
-        if (!m_SDLController && SDL_NumJoysticks() > 0)
+        // SDL3
+
+        if (!m_SDLController && SDL_GetNumJoysticks() > 0)
         {
-            if (SDL_IsGameController(0))
-                m_SDLController = SDL_OpenGameController(0);
+            if (SDL_IsGamepad(0))
+                m_SDLController = SDL_OpenGamepad(0);
         }
 
         if (m_SDLController)
         {
             Uint16 buttons = 0;
-            for (int b = 0; b < SDL_CONTROLLER_BUTTON_MAX; ++b)
+
+            for (int b = 0; b < SDL_GAMEPAD_BUTTON_COUNT; ++b)
             {
-                if (SDL_GameControllerGetButton(m_SDLController, (SDL_GameControllerButton)b))
+                if (SDL_GetGamepadButton(m_SDLController, (SDL_GamepadButton)b))
                     buttons |= (1 << b);
             }
 
             m_CurrentState.Gamepad.wButtons = buttons;
 
             m_CurrentState.Gamepad.sThumbLX =
-                static_cast<SHORT>(SDL_GameControllerGetAxis(m_SDLController, SDL_CONTROLLER_AXIS_LEFTX));
+                (short)SDL_GetGamepadAxis(m_SDLController, SDL_GAMEPAD_AXIS_LEFTX);
 
             m_CurrentState.Gamepad.sThumbLY =
-                static_cast<SHORT>(SDL_GameControllerGetAxis(m_SDLController, SDL_CONTROLLER_AXIS_LEFTY));
+                (short)SDL_GetGamepadAxis(m_SDLController, SDL_GAMEPAD_AXIS_LEFTY);
         }
 
 #else
