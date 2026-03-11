@@ -3,29 +3,39 @@
 #include "GameObject.h"
 #include "MoveComponent.h"
 #include "InputManager.h"
-#include <iostream>
-#include <windows.h>
+
 namespace dae
 {
     class PlayerControllerComponent : public dae::Component
     {
     public:
-        explicit PlayerControllerComponent(GameObject& owner) : Component(owner) {}
+        explicit PlayerControllerComponent(GameObject& owner, bool isKeyboard)
+            : Component(owner),
+            IsKeyboard{isKeyboard}
+        {
+             
+        }
 
         void Update(float delta) override
         {
             auto& input = dae::InputManager::GetInstance();
-            float x = input.GetLeftStickX();
-            float y = input.GetLeftStickY();
 
+            float x = 0.f, y = 0.f;
+            if (IsKeyboard)
+            {
+                if (input.IsMoveLeft())  x -= 1.f;
+                if (input.IsMoveRight()) x += 1.f;
+                if (input.IsMoveUp())    y += 1.f;
+                if (input.IsMoveDown())  y -= 1.f;
 
-            // inside Update():
-            XINPUT_STATE state{};
-            DWORD result = XInputGetState(0, &state);
-            OutputDebugStringA(("Result: " + std::to_string(result) +
-                "  Raw X: " + std::to_string(state.Gamepad.sThumbLX) + "\n").c_str());
-
-
+            }
+            else
+            {
+                x = input.GetLeftStickX();
+                y = input.GetLeftStickY();
+            }
+            
+           
             if (x != 0.f || y != 0.f)
             {
                 auto move = GetOwner().GetComponent<MoveComponent>();
@@ -33,6 +43,7 @@ namespace dae
                     move->Move(x, y, delta);
             }
         }
+    private:
+        bool IsKeyboard;
     };
-
 }

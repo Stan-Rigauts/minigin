@@ -85,23 +85,34 @@ static void load()
 
 
 
-	// --- Create Player ---
+	// 
 	auto player = std::make_unique<dae::GameObject>();
 
-	// Render
 	auto render = std::make_unique<dae::RenderComponent>(*player);
 	render->SetTexture("MSPAC.png");
 	player->AddComponent(std::move(render));
 
-	// MoveComponent
-	auto moveComp = std::make_unique<dae::MoveComponent>(*player, 200.f); // 200 units per second
+	auto moveComp = std::make_unique<dae::MoveComponent>(*player, 200.f); 
 	player->AddComponent(std::move(moveComp));
 
-	// PlayerControllerComponent reads input and moves the player
-	player->AddComponent(std::make_unique<dae::PlayerControllerComponent>(*player));
+	player->AddComponent(std::make_unique<dae::PlayerControllerComponent>(*player,true));
 
-	// Add player to the scene
 	scene.Add(std::move(player));
+
+
+	//
+	auto player2 = std::make_unique<dae::GameObject>();
+
+	auto render2 = std::make_unique<dae::RenderComponent>(*player2);
+	render2->SetTexture("MSPAC.png");
+	player2->AddComponent(std::move(render2));
+
+	auto moveComp2 = std::make_unique<dae::MoveComponent>(*player2, 400.f); 
+	player2->AddComponent(std::move(moveComp2));
+
+	player2->AddComponent(std::make_unique<dae::PlayerControllerComponent>(*player2, false));
+
+	scene.Add(std::move(player2));
 
 
 

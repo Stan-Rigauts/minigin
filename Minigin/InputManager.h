@@ -20,9 +20,16 @@ namespace dae
 		bool IsUpThisFrame(WORD button) const;
 		bool IsPressed(WORD button) const;
 
-		// Bind a command to a button
 		void BindCommand(WORD button, std::unique_ptr<Command> command);
 
+		bool IsMoveUp() const { return m_MoveUp; }
+		bool IsMoveDown() const { return m_MoveDown; }
+		bool IsMoveLeft() const { return m_MoveLeft; }
+		bool IsMoveRight() const { return m_MoveRight; }
+
+		#ifdef __EMSCRIPTEN__
+SDL_GameController* m_SDLController = nullptr;
+#endif
 	private:
 		XINPUT_STATE m_CurrentState{};
 		XINPUT_STATE m_PreviousState{};
@@ -30,7 +37,11 @@ namespace dae
 		WORD m_ButtonsPressedThisFrame{};
 		WORD m_ButtonsReleasedThisFrame{};
 
-		// Stores button → command mapping
+		bool m_MoveUp{ false };
+		bool m_MoveDown{ false };
+		bool m_MoveLeft{ false };
+		bool m_MoveRight{ false };
+
 		std::map<WORD, std::unique_ptr<Command>> m_ButtonBindings{};
 	};
 }
