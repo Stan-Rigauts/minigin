@@ -7,14 +7,15 @@ namespace dae
     ThrashTheCacheComponent::ThrashTheCacheComponent(GameObject& owner)
         : Component(owner)
         , m_Ex1Samples(10)
-        , m_Ex2Samples(100)
         , m_Ex1HasResult(false)
+        , m_Ex2Samples(100)
         , m_Ex2HasResult(false)
         , m_Ex2AltHasResult(false)
     {
         for (int i = 0; i < 11; ++i)
             m_Xs[i] = float(i);
     }
+
 
     void ThrashTheCacheComponent::Render() const
     {
