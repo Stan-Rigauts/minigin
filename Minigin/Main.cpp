@@ -19,6 +19,7 @@
 #include "PlayerControllerComponent.h"
 #include "MoveComponent.h"
 #include <filesystem>
+
 namespace fs = std::filesystem;
 
 static void load()
@@ -85,35 +86,43 @@ static void load()
 
 
 
-	// 
+	// Player 1 (keyboard)
 	auto player = std::make_unique<dae::GameObject>();
 
 	auto render = std::make_unique<dae::RenderComponent>(*player);
 	render->SetTexture("MSPAC.png");
 	player->AddComponent(std::move(render));
 
-	auto moveComp = std::make_unique<dae::MoveComponent>(*player, 200.f); 
+	auto moveComp = std::make_unique<dae::MoveComponent>(*player, 200.f);
 	player->AddComponent(std::move(moveComp));
 
-	player->AddComponent(std::make_unique<dae::PlayerControllerComponent>(*player,true));
+	auto& input = dae::InputManager::GetInstance();
+	input.BindCommand(SDL_SCANCODE_W, std::make_unique<dae::MoveCommand>(player.get(), 0.f, 1.f));
+	input.BindCommand(SDL_SCANCODE_S, std::make_unique<dae::MoveCommand>(player.get(), 0.f, -1.f));
+	input.BindCommand(SDL_SCANCODE_A, std::make_unique<dae::MoveCommand>(player.get(), -1.f, 0.f));
+	input.BindCommand(SDL_SCANCODE_D, std::make_unique<dae::MoveCommand>(player.get(), 1.f, 0.f));
+
 
 	scene.Add(std::move(player));
 
-
-	//
+	// Player 2 (controller)
 	auto player2 = std::make_unique<dae::GameObject>();
 
 	auto render2 = std::make_unique<dae::RenderComponent>(*player2);
 	render2->SetTexture("MSPAC.png");
 	player2->AddComponent(std::move(render2));
 
-	auto moveComp2 = std::make_unique<dae::MoveComponent>(*player2, 400.f); 
+	auto moveComp2 = std::make_unique<dae::MoveComponent>(*player2, 400.f);
 	player2->AddComponent(std::move(moveComp2));
+	player2->AddComponent(std::make_unique<dae::PlayerControllerComponent>(*player2));
 
-	player2->AddComponent(std::make_unique<dae::PlayerControllerComponent>(*player2, false));
+	input.BindCommand(dae::ControllerButton::DPadUp, std::make_unique<dae::MoveCommand>(player2.get(), 0.f, 1.f));
+	input.BindCommand(dae::ControllerButton::DPadDown, std::make_unique<dae::MoveCommand>(player2.get(), 0.f, -1.f));
+	input.BindCommand(dae::ControllerButton::DPadLeft, std::make_unique<dae::MoveCommand>(player2.get(), -1.f, 0.f));
+	input.BindCommand(dae::ControllerButton::DPadRight, std::make_unique<dae::MoveCommand>(player2.get(), 1.f, 0.f));
+
 
 	scene.Add(std::move(player2));
-
 
 
 	//auto imguitrasher = std::make_unique<dae::GameObject>();

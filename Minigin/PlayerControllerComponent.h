@@ -3,47 +3,40 @@
 #include "GameObject.h"
 #include "MoveComponent.h"
 #include "InputManager.h"
+#include <cmath>
 
 namespace dae
 {
-    class PlayerControllerComponent : public dae::Component
+    class PlayerControllerComponent : public Component
     {
     public:
-        explicit PlayerControllerComponent(GameObject& owner, bool isKeyboard)
-            : Component(owner),
-            IsKeyboard{isKeyboard}
+        explicit PlayerControllerComponent(GameObject& owner)
+            : Component(owner)
         {
-             
         }
 
-        void Update(float delta) override
+        void Update(float) override
         {
-            auto& input = dae::InputManager::GetInstance();
+            // Handle analog stick movement (controller only)
+            auto& input = InputManager::GetInstance();
+            float x = input.GetLeftStickX();
+            float y = input.GetLeftStickY();
 
-            float x = 0.f, y = 0.f;
-            if (IsKeyboard)
-            {
-                if (input.IsMoveLeft())  x -= 1.f;
-                if (input.IsMoveRight()) x += 1.f;
-                if (input.IsMoveUp())    y += 1.f;
-                if (input.IsMoveDown())  y -= 1.f;
+            // Skip if stick is in deadzone
+            if (x == 0.f && y == 0.f)
+                return;
 
-            }
-            else
+            // Optional: normalize diagonal movement
+            float length = std::sqrt(x * x + y * y);
+            if (length > 1.f)
             {
-                x = input.GetLeftStickX();
-                y = input.GetLeftStickY();
+                x /= length;
+                y /= length;
             }
-            
-           
-            if (x != 0.f || y != 0.f)
-            {
-                auto move = GetOwner().GetComponent<MoveComponent>();
-                if (move)
-                    move->Move(x, y, delta);
-            }
+
+            auto move = GetOwner().GetComponent<MoveComponent>();
+            if (move)
+                move->Move(x, y);
         }
-    private:
-        bool IsKeyboard;
     };
 }

@@ -5,15 +5,14 @@
 
 static constexpr size_t BUFFER_SIZE = 1000000;
 
-static float Average(std::vector<long long>& times)
+static float Average(std::vector<float>& times)
 {
     if (times.empty())
         return 0.f;
 
     float sum = 0;
-    for (long long t : times)
-        sum += t;
-
+    for (float t : times)
+       sum += t;
     return static_cast<float>(sum / times.size());
 }
 
@@ -26,7 +25,7 @@ TimingResult CacheTrasher::RunExercise1(int samples)
 
     for (size_t stepSize = 1; stepSize <= 1024; stepSize *= 2)
     {
-        std::vector<long long> timingsForThisStep;
+        std::vector<float> timingsForThisStep;
 
         for (int sample = 0; sample < samples; ++sample)
         {
@@ -36,7 +35,7 @@ TimingResult CacheTrasher::RunExercise1(int samples)
                 buffer[i] *= 2;
 
             auto end = std::chrono::high_resolution_clock::now();
-            timingsForThisStep.push_back(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+            timingsForThisStep.push_back((float)std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
         }
 
         result.timings.push_back(Average(timingsForThisStep));
@@ -62,7 +61,7 @@ TimingResult CacheTrasher::RunExercise2_GameObject3D(int samples)
 
     for (size_t stepSize = 1; stepSize <= 1024; stepSize *= 2)
     {
-        std::vector<long long> timingsForThisStep;
+        std::vector<float> timingsForThisStep;
 
         for (int sample = 0; sample < samples; ++sample)
         {
@@ -72,7 +71,7 @@ TimingResult CacheTrasher::RunExercise2_GameObject3D(int samples)
                 objects[i].local->matrix[0] *= 2.0f;
 
             auto end = std::chrono::high_resolution_clock::now();
-            timingsForThisStep.push_back(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+            timingsForThisStep.push_back((float)std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
         }
 
         result.timings.push_back(Average(timingsForThisStep));
@@ -98,7 +97,7 @@ TimingResult CacheTrasher::RunExercise2_GameObject3DAlt(int samples)
 
     for (size_t stepSize = 1; stepSize <= 1024; stepSize *= 2)
     {
-        std::vector<long long> timingsForThisStep;
+        std::vector<float> timingsForThisStep;
 
         for (int sample = 0; sample < samples; ++sample)
         {
@@ -108,7 +107,7 @@ TimingResult CacheTrasher::RunExercise2_GameObject3DAlt(int samples)
                 transforms[i].matrix[0] *= 2.0f;
 
             auto end = std::chrono::high_resolution_clock::now();
-            timingsForThisStep.push_back(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+            timingsForThisStep.push_back((float)std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
         }
 
         result.timings.push_back(Average(timingsForThisStep));

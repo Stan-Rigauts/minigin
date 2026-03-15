@@ -9,6 +9,7 @@
 #include <backends/imgui_impl_sdlrenderer3.h>
 #include "imgui_plot.h"
 #include "CacheTrasher.h"
+
 void dae::Renderer::Init(SDL_Window* window)
 {
 	m_window = window;
@@ -47,7 +48,9 @@ void dae::Renderer::Render() const
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
     SDL_RenderClear(m_renderer);
     SceneManager::GetInstance().Render();
+
     ImGui::Render();
+
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), m_renderer);
     SDL_RenderPresent(m_renderer);
 }

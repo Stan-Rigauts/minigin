@@ -32,7 +32,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Minigin/ThrashTheCacheComponent.cpp
 
   Minigin/MoveComponent.cpp 
-
+  Minigin/Command.cpp
   Minigin/imgui_plot.cpp
 
   # headers 
@@ -172,7 +172,7 @@ target_link_libraries("${TARGET_NAME}" PUBLIC
 
 if(MSVC)
   # compile at warning level 4 + treat warnings as errors
-  target_compile_options(${TARGET_NAME} PRIVATE /W4 /WX)
+  target_compile_options(${TARGET_NAME} PRIVATE /W4 /WX )
 else()
   target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -Werror)
 endif()

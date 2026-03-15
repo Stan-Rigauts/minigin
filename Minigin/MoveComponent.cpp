@@ -11,15 +11,12 @@ namespace dae
 	{
 	}
 
-	void MoveComponent::Move(float x, float y, float delta)
+	void MoveComponent::Move(float x, float y)
 	{
 		auto& transform = GetOwner().GetTransform();
-
 		auto pos = transform.GetWorldPosition();
-
-		pos.x += x * m_Speed * delta;
-		pos.y -= y * m_Speed * delta;
-
+		pos.x += x * m_Speed * m_Delta;
+		pos.y -= y * m_Speed * m_Delta;
 		transform.SetLocalPosition(pos);
 	}
 
