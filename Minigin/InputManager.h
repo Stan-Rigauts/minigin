@@ -3,6 +3,8 @@
 #include "Command.h"
 #include <memory>
 #include <SDL3/SDL.h>
+#include <array>
+#include <unordered_map>
 
 namespace dae
 {
@@ -24,21 +26,37 @@ namespace dae
         Y = 0x8000,
     };
 
+    enum class InputTriggerType
+    {
+        OnPressed,
+        OnReleased,
+        WhilePressed
+    };
+    
+
     class InputManager final : public Singleton<InputManager>
     {
+       
+
     public:
         InputManager();
         ~InputManager();
+
         bool ProcessInput();
+
         float GetLeftStickX() const;
         float GetLeftStickY() const;
+
         bool IsDownThisFrame(ControllerButton button) const;
         bool IsUpThisFrame(ControllerButton button) const;
         bool IsPressed(ControllerButton button) const;
-        void BindCommand(ControllerButton button, std::unique_ptr<Command> command);
-        void BindCommand(SDL_Scancode key, std::unique_ptr<Command> command);
+
+        void BindCommand(SDL_Scancode key, std::unique_ptr<Command> command, InputTriggerType trigger);
+        void BindCommand(ControllerButton button, std::unique_ptr<Command> command, InputTriggerType trigger);
+
         void UnbindCommand(SDL_Scancode key);
         void UnbindCommand(ControllerButton button);
+
     private:
         struct Impl;
         std::unique_ptr<Impl> m_pImpl;

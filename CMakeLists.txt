@@ -30,18 +30,29 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Minigin/FPSComponent.cpp
   Minigin/CacheTrasher.cpp
   Minigin/ThrashTheCacheComponent.cpp
-
+  Minigin/LivesDisplayComponent.cpp
   Minigin/MoveComponent.cpp 
   Minigin/Command.cpp
   Minigin/imgui_plot.cpp
+  Minigin/ScoreDisplayComponent.cpp
+  Minigin/ScoreComponent.cpp
 
   # headers 
+  Minigin/ScoreComponent.h
+  Minigin/ScoreDisplayComponent.h
   Minigin/Component.h
   Minigin/RenderComponent.h
   Minigin/FPSComponent.h
   Minigin/imgui_plot.h
   Minigin/Command.h
- "Minigin/PlayerControllerComponent.h")
+  Minigin/PlayerControllerComponent.h
+  Minigin/Observer.h
+  Minigin/GameEvent.h
+  Minigin/Subject.h
+  Minigin/Subject.cpp 
+  Minigin/HealthComponent.h 
+  Minigin/HealthComponent.cpp 
+  Minigin/LivesDisplayComponent.h )
 
 
 # enable c++20 features
@@ -136,7 +147,8 @@ add_library(imgui STATIC
   ${imgui_SOURCE_DIR}/imgui_demo.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
-  "Minigin/ThrashTheCacheComponent.cpp" "Minigin/Command.h" "Minigin/PlayerControllerComponent.h")
+  "Minigin/ThrashTheCacheComponent.cpp"
+ )
 
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
 target_link_libraries(imgui PUBLIC SDL3::SDL3)

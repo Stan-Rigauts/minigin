@@ -1,15 +1,30 @@
 #include "Command.h"
 #include "GameObject.h"
 #include "MoveComponent.h"
+#include "ScoreComponent.h"
+#include "HealthComponent.h"
 
-dae::MoveCommand::MoveCommand(GameObject* player, float x, float y)
-    : m_Player(player), m_DirX(x), m_DirY(y) {
-}
-
-void dae::MoveCommand::Execute()
+namespace dae
 {
-    if (!m_Player) return;
-    auto move = m_Player->GetComponent<MoveComponent>();
-    if (move)
-        move->Move(m_DirX, m_DirY);  
+    void MoveCommand::Execute()
+    {
+        if (!m_Player) return;
+
+        if (auto move = m_Player->GetComponent<MoveComponent>())
+        {
+            move->Move(m_DirX, m_DirY);
+        }
+    }
+
+    void ScoreCommand::Execute()
+    {
+        if (m_pScore)
+            m_pScore->AddScore(m_Amount);
+    }
+
+    void HealthCommand::Execute()
+    {
+        if (m_pHealth)
+            m_pHealth->Damage(m_Damage);
+    }
 }
