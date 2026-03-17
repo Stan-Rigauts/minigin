@@ -2,7 +2,7 @@
 #include <SDL3/SDL.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <cmath>
-
+#include <vector>
 #ifdef __EMSCRIPTEN__
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
