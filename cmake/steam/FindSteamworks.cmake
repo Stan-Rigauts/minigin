@@ -17,11 +17,14 @@ include(FindPackageHandleStandardArgs)
 # ------------------------------------------------------------
 # User override. 
 # Use cmake -DSTEAMWORKS_ROOT="C:/SDKs/steamworks_sdk_163" ..
+# Guard with if(NOT) so a passed-in value is never clobbered.
 # ------------------------------------------------------------
 
-set(STEAMWORKS_ROOT "" CACHE PATH
-    "Path to Steamworks SDK root (steamworks_sdk_###)"
-)
+if(NOT STEAMWORKS_ROOT)
+    set(STEAMWORKS_ROOT "" CACHE PATH
+        "Path to Steamworks SDK root (steamworks_sdk_###)"
+    )
+endif()
 
 # ------------------------------------------------------------
 # Auto-detection. If the user did not specify STEAMWORKS_ROOT, 

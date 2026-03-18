@@ -60,7 +60,6 @@ namespace dae
             ImGui_ImplSDL3_ProcessEvent(&e);
         }
 
-        // --- KEYBOARD ---
         int numKeys = 0;
         const bool* keyState = SDL_GetKeyboardState(&numKeys);
 
@@ -87,11 +86,9 @@ namespace dae
             }
         }
 
-        // Store previous keyboard state
         for (int i = 0; i < numKeys; ++i)
             m_pImpl->m_PreviousKeyState[i] = keyState[i];
 
-        // --- CONTROLLER ---
         m_pImpl->m_PreviousState = m_pImpl->m_CurrentState;
         m_pImpl->m_CurrentState = {};
 

@@ -24,7 +24,7 @@
 #include "MoveComponent.h"
 #include <filesystem>
 #include "InputManager.h"
-
+#include "SteamAchievementsObserver.h"
 
 namespace fs = std::filesystem;
 
@@ -91,6 +91,28 @@ static void load()
 	));
 
 
+	// Instructions
+	auto smallFont = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+	auto instrGO = std::make_unique<dae::GameObject>();
+	instrGO->SetLocalPosition(10, 70);
+	auto instrText = std::make_unique<dae::TextComponent>(
+		*instrGO,
+		"Use WASD to move Ms Pacman, C to inflict damage, Z and X to pick up pellets",
+		smallFont, SDL_Color{ 255, 255, 255, 255 }
+	);
+	instrGO->AddComponent(std::move(instrText));
+	scene.Add(std::move(instrGO));
+
+	auto instr2GO = std::make_unique<dae::GameObject>();
+	instr2GO->SetLocalPosition(10, 100);
+	auto instr2Text = std::make_unique<dae::TextComponent>(
+		*instr2GO,
+		"Use D-Pad to move Pacman, A to inflict damage, B to pick up pellets",
+		smallFont, SDL_Color{ 255, 255, 255, 255 }
+	);
+	instr2GO->AddComponent(std::move(instr2Text));
+	scene.Add(std::move(instr2GO));
+
 
 	// Player 1 (keyboard)
 	auto player = std::make_unique<dae::GameObject>();
@@ -129,10 +151,10 @@ static void load()
 	scene.Add(std::move(player));
 
 	auto p1LivesGO = std::make_unique<dae::GameObject>();
-	p1LivesGO->SetLocalPosition(10, 60);
+	p1LivesGO->SetLocalPosition(10, 150);
 
 	auto p1LivesText = std::make_unique<dae::TextComponent>(
-		*p1LivesGO, "Lives: 3", font, SDL_Color{ 255,255,255,255 }
+		*p1LivesGO, "Lives: 3", smallFont, SDL_Color{ 255,255,255,255 }
 	);
 	auto* p1LivesPtr = p1LivesText.get();
 	p1LivesGO->AddComponent(std::move(p1LivesText));
@@ -144,10 +166,10 @@ static void load()
 	scene.Add(std::move(p1LivesGO));
 
 	auto p1ScoreGO = std::make_unique<dae::GameObject>();
-	p1ScoreGO->SetLocalPosition(10, 90);   
+	p1ScoreGO->SetLocalPosition(10, 180);   
 
 	auto p1ScoreText = std::make_unique<dae::TextComponent>(
-		*p1ScoreGO, "Score: 0", font, SDL_Color{ 255,255,255,255 }
+		*p1ScoreGO, "Score: 0", smallFont, SDL_Color{ 255,255,255,255 }
 	);
 	auto* p1ScorePtr = p1ScoreText.get();
 	p1ScoreGO->AddComponent(std::move(p1ScoreText));
@@ -196,10 +218,10 @@ static void load()
 
 
 	auto p2LivesGO = std::make_unique<dae::GameObject>();
-	p2LivesGO->SetLocalPosition(10, 120);   // Lives offset
+	p2LivesGO->SetLocalPosition(10, 210);   // Lives offset
 
 	auto p2LivesText = std::make_unique<dae::TextComponent>(
-		*p2LivesGO, "Lives: 3", font, SDL_Color{ 255,255,255,255 }
+		*p2LivesGO, "Lives: 3", smallFont, SDL_Color{ 255,255,255,255 }
 	);
 	auto* p2LivesPtr = p2LivesText.get();
 	p2LivesGO->AddComponent(std::move(p2LivesText));
@@ -211,10 +233,10 @@ static void load()
 	scene.Add(std::move(p2LivesGO));
 
 	auto p2ScoreGO = std::make_unique<dae::GameObject>();
-	p2ScoreGO->SetLocalPosition(10, 150);   // Score offset (different!)
+	p2ScoreGO->SetLocalPosition(10, 240); 
 
 	auto p2ScoreText = std::make_unique<dae::TextComponent>(
-		*p2ScoreGO, "Score: 0", font, SDL_Color{ 255,255,255,255 }
+		*p2ScoreGO, "Score: 0", smallFont, SDL_Color{ 255,255,255,255 }
 	);
 	auto* p2ScorePtr = p2ScoreText.get();
 	p2ScoreGO->AddComponent(std::move(p2ScoreText));
@@ -227,6 +249,17 @@ static void load()
 
 	scene.Add(std::move(player2));
 
+#if USE_STEAMWORKS
+	auto steamAchGO = std::make_unique<dae::GameObject>();
+	auto steamObserver = std::make_unique<dae::SteamAchievementsObserver>(*steamAchGO);
+	auto* steamObsPtr = steamObserver.get();
+
+	scorePtr->GetSubject().AddObserver(steamObsPtr);
+	score2Ptr->GetSubject().AddObserver(steamObsPtr);
+
+	steamAchGO->AddComponent(std::move(steamObserver));
+	scene.Add(std::move(steamAchGO));
+#endif
 	//auto imguitrasher = std::make_unique<dae::GameObject>();
 	//auto trasher = std::make_unique<dae::ThrashTheCacheComponent>(*imguitrasher);
 	//imguitrasher->AddComponent(std::move(trasher));

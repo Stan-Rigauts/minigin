@@ -11,7 +11,7 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
         "CMAKE_CXX_COMPILER": "cl.exe",
-        "STEAMWORKS_ROOT": "C:/Prog4/steamworks_sdk_163"
+        "STEAMWORKS_ROOT": "C:/Prog4/minigin/steamworks_sdk_163"
       },
       "condition": {
         "type": "equals",
@@ -35,8 +35,12 @@
     {
       "name": "x64-release",
       "displayName": "x64 Release",
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (RelWithDebInfo)",
-      "inherits": "x64-debug",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
+      "inherits": "windows-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
