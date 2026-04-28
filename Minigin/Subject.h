@@ -9,7 +9,7 @@ public:
     ~Subject();
     void AddObserver(Observer* observer);
     void RemoveObserver(Observer* observer);
-    void Notify(GameEvent event, dae::GameObject* owner);
+    void Notify(int event, dae::GameObject* owner);
     bool IsDestroyed() const { return m_Destroyed; }
 private:
     std::vector<Observer*> m_Observers;

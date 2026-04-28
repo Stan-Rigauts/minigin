@@ -1,4 +1,5 @@
 #include "Subject.h"
+#include <algorithm>
 
 Subject::~Subject()
 {
@@ -17,7 +18,7 @@ void Subject::RemoveObserver(Observer* observer)
     m_Observers.erase(std::remove(m_Observers.begin(), m_Observers.end(), observer), m_Observers.end());
 }
 
-void Subject::Notify(GameEvent event, dae::GameObject* owner)
+void Subject::Notify(int event, dae::GameObject* owner)
 {
     for (auto* observer : m_Observers)
         observer->OnNotify(event, owner);

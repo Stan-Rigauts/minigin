@@ -23,6 +23,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "servicelocator.h"
 
 SDL_Window* g_window{};
 
@@ -87,6 +88,8 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 
 dae::Minigin::~Minigin()
 {
+	servicelocator::register_sound_system(nullptr); // destroy sound system first
+
 #if USE_STEAMWORKS
 	SteamAPI_Shutdown();
 #endif

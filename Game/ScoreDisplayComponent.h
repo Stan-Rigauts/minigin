@@ -6,7 +6,7 @@
 
 namespace dae
 {
-    class ScoreDisplayComponent final : public Component, public Observer
+    class ScoreDisplayComponent final : public Component, public GameObserver
     {
     public:
         ScoreDisplayComponent(GameObject& owner, ScoreComponent& scoreComp, TextComponent& textComp)

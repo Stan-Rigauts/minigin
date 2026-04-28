@@ -6,7 +6,7 @@
 
 namespace dae
 {
-    class LivesDisplayComponent final : public Component, public Observer
+    class LivesDisplayComponent final : public Component, public GameObserver
     {
     public:
         LivesDisplayComponent(GameObject& owner, HealthComponent& healthComp, TextComponent& textComp)

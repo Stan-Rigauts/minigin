@@ -17,7 +17,7 @@
 #include "PlayerControllerComponent.h"
 #include "servicelocator.h"
 #include "SoundIds.h"
-
+#include "Command.h" 
 #include <iostream>
 #include <string>
 
