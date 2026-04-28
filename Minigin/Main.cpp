@@ -12,7 +12,10 @@
 #include "servicelocator.h"
 #include "sdl_sound_system.h"
 #include "SoundIds.h"
+
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -44,8 +47,10 @@ static void load()
 
     servicelocator::register_sound_system(std::make_unique<sdl_sound_system>());
 
+#ifdef _WIN32
     std::string cwd = fs::current_path().string() + "\n";
     OutputDebugStringA(cwd.c_str());
+#endif
 
     servicelocator::get_sound_system().load(SND_PELLET, "Data/pellet.wav");
 
@@ -62,8 +67,6 @@ static void load()
 int main(int, char* [])
 {
     fs::path data_location = fs::absolute("Data");
-
-
 
     if (!fs::exists(data_location))
         data_location = "../Data/";
