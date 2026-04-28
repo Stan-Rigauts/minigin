@@ -48,7 +48,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
     Minigin/SoundIds.h
     Minigin/sdl_sound_system.h
 )
- 
+
 # FETCHCONTENT
 include(FetchContent)
 
@@ -62,6 +62,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 target_include_directories(${TARGET_NAME} PUBLIC ${glm_SOURCE_DIR})
+
 # SDL3
 find_package(SDL3 3.4 CONFIG QUIET)
 
@@ -85,9 +86,7 @@ if(NOT SDL3_FOUND)
     endif()
 endif()
 
-
 # SDL3_ttf
-
 find_package(SDL3_ttf 3.2.2 CONFIG QUIET)
 
 if(NOT SDL3_ttf_FOUND)
@@ -97,9 +96,10 @@ if(NOT SDL3_ttf_FOUND)
             URL https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-devel-3.2.2-VC.zip
         )
         FetchContent_MakeAvailable(SDL3_ttf)
-      set(SDL3_ttf_DIR "${sdl3_ttf_SOURCE_DIR}/cmake" CACHE PATH "" FORCE)
+        set(SDL3_ttf_DIR "${sdl3_ttf_SOURCE_DIR}/cmake" CACHE PATH "" FORCE)
         find_package(SDL3_ttf CONFIG REQUIRED)
     else()
+        set(SDL3TTF_VENDORED ON CACHE BOOL "" FORCE)
         FetchContent_Declare(
             SDL3_ttf
             GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
@@ -109,7 +109,6 @@ if(NOT SDL3_ttf_FOUND)
         FetchContent_MakeAvailable(SDL3_ttf)
     endif()
 endif()
-
 
 # SDL3_mixer
 set(SDL3MIXER_VENDORED ON CACHE BOOL "" FORCE)
@@ -124,11 +123,9 @@ FetchContent_Declare(
     GIT_TAG main
     GIT_SHALLOW TRUE
 )
-
 FetchContent_MakeAvailable(SDL3_mixer)
 
 # IMGUI
-
 FetchContent_Declare(
     imgui
     GIT_REPOSITORY https://github.com/ocornut/imgui
@@ -150,7 +147,6 @@ target_include_directories(imgui PUBLIC
     ${imgui_SOURCE_DIR}
     ${SDL3_SOURCE_DIR}/include
 )
-
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
 target_compile_features(imgui PUBLIC cxx_std_20)
 
@@ -207,16 +203,23 @@ endif()
 # EMSCRIPTEN
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    target_link_options(${TARGET_NAME} PRIVATE
+        -sASYNCIFY
+        -sALLOW_MEMORY_GROWTH=1
+        --preload-file ${CMAKE_SOURCE_DIR}/Data@/Data
+    )
 endif()
 
-# DATA FOLDER COPY
-add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory
-        $<TARGET_FILE_DIR:${TARGET_NAME}>/Data
-)
+# DATA FOLDER COPY (non-Emscripten only)
+if(NOT EMSCRIPTEN)
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:${TARGET_NAME}>/Data
+    )
 
-add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/Data
-        $<TARGET_FILE_DIR:${TARGET_NAME}>/Data
-)
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/Data
+            $<TARGET_FILE_DIR:${TARGET_NAME}>/Data
+    )
+endif()
