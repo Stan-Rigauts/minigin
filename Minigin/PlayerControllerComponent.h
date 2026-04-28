@@ -17,16 +17,13 @@ namespace dae
 
         void Update(float) override
         {
-            // Handle analog stick movement (controller only)
             auto& input = InputManager::GetInstance();
             float x = input.GetLeftStickX();
             float y = input.GetLeftStickY();
 
-            // Skip if stick is in deadzone
             if (x == 0.f && y == 0.f)
                 return;
 
-            // Optional: normalize diagonal movement
             float length = std::sqrt(x * x + y * y);
             if (length > 1.f)
             {
@@ -36,7 +33,7 @@ namespace dae
 
             auto move = GetOwner().GetComponent<MoveComponent>();
             if (move)
-                move->Move(x, y);
+                move->Move(x, -y);  
         }
     };
 }

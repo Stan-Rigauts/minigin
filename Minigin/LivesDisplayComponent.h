@@ -16,26 +16,19 @@ namespace dae
         {
             m_HealthComponent.GetSubject().AddObserver(this);
         }
-
         ~LivesDisplayComponent() override
         {
             m_HealthComponent.GetSubject().RemoveObserver(this);
         }
-
-        void OnNotify(GameEvent event, int value) override
+        void OnNotify(GameEvent event, dae::GameObject* owner) override
         {
             if (event == GameEvent::PlayerDamaged || event == GameEvent::PlayerDied)
             {
-                UpdateText(value);
+                auto lives = owner->GetComponent<HealthComponent>()->GetLives();
+                m_TextComponent.SetText("Lives: " + std::to_string(lives));
             }
         }
-
     private:
-        void UpdateText(int lives)
-        {
-            m_TextComponent.SetText("Lives: " + std::to_string(lives));
-        }
-
         HealthComponent& m_HealthComponent;
         TextComponent& m_TextComponent;
     };

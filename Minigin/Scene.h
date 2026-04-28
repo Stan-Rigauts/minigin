@@ -23,6 +23,7 @@ namespace dae
 		Scene& operator=(const Scene& other) = delete;
 		Scene& operator=(Scene&& other) = delete;
 
+		void RemoveObjectsWithTag(const char* tag);
 	private:
 		friend class SceneManager;
 		explicit Scene() = default;

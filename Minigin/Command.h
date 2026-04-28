@@ -1,4 +1,6 @@
 #pragma once
+#include "GameManagerComponent.h"
+#include "GameState.h"
 
 namespace dae
 {
@@ -12,6 +14,7 @@ namespace dae
     class GameObject;
     class ScoreComponent;
     class HealthComponent;
+    
 
    
     class MoveCommand final : public Command
@@ -64,5 +67,23 @@ namespace dae
     private:
         HealthComponent* m_pHealth{};
         int m_Damage{};
+    };
+
+    class RestartCommand final : public Command
+    {
+    public:
+        RestartCommand(GameManagerComponent* manager, GameMode mode)
+            : m_pManager(manager), m_Mode(mode) {
+        }
+
+        void Execute() override
+        {
+            if (m_pManager->GetGameState() == GameState::ScoreBoard)
+                m_pManager->StartGame(m_Mode);
+        }
+
+    private:
+        GameManagerComponent* m_pManager;
+        GameMode              m_Mode;
     };
 }

@@ -2,9 +2,10 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 #include "Component.h"
 #include "Transform.h"
+#include <string>
 
 namespace dae
 {
@@ -62,6 +63,8 @@ namespace dae
         GameObject* GetChildAt(size_t index) const { return m_pChildren[index]; }
         std::vector<GameObject*> GetChildren() const { return m_pChildren; }
 
+        void        SetTag(const char* tag) { m_Tag = tag; }
+        std::string GetTag() const { return m_Tag; }
 
     private:
     
@@ -75,6 +78,8 @@ namespace dae
 
         GameObject* m_pParent{ nullptr };
         std::vector<GameObject*> m_pChildren{};
+
+        std::string m_Tag{};
 
         std::vector<std::unique_ptr<Component>> m_Components{};
     };

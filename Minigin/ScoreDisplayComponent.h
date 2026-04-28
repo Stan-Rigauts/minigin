@@ -16,26 +16,19 @@ namespace dae
         {
             m_ScoreComponent.GetSubject().AddObserver(this);
         }
-
         ~ScoreDisplayComponent() override
         {
             m_ScoreComponent.GetSubject().RemoveObserver(this);
         }
-
-        void OnNotify(GameEvent event, int value) override
+        void OnNotify(GameEvent event, dae::GameObject* owner) override
         {
             if (event == GameEvent::ScoreChanged || event == GameEvent::ScoreReset)
             {
-                UpdateText(value);
+                auto score = owner->GetComponent<ScoreComponent>()->GetScore();
+                m_TextComponent.SetText("Score: " + std::to_string(score));
             }
         }
-
     private:
-        void UpdateText(int score)
-        {
-            m_TextComponent.SetText("Score: " + std::to_string(score));
-        }
-
         ScoreComponent& m_ScoreComponent;
         TextComponent& m_TextComponent;
     };

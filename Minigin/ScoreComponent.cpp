@@ -5,12 +5,11 @@ namespace dae
     void ScoreComponent::AddScore(int amount)
     {
         m_Score += amount;
-        m_Subject.Notify(GameEvent::ScoreChanged, m_Score);
+        m_Subject.Notify(GameEvent::ScoreChanged, &GetOwner());
     }
-
     void ScoreComponent::ResetScore()
     {
         m_Score = 0;
-        m_Subject.Notify(GameEvent::ScoreReset, m_Score);
+        m_Subject.Notify(GameEvent::ScoreReset, &GetOwner());
     }
 }

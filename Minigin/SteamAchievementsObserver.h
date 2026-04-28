@@ -1,6 +1,7 @@
 #pragma once
 #include "Observer.h"
 #include "Component.h"
+#include "ScoreComponent.h"
 #if USE_STEAMWORKS
 #include <steam_api.h>
 #endif
@@ -16,16 +17,19 @@ namespace dae
         }
         ~SteamAchievementsObserver() override = default;
 
-        void OnNotify(GameEvent event, int value) override
+        void OnNotify(GameEvent event, dae::GameObject* owner) override
         {
 #if USE_STEAMWORKS
-            if (event == GameEvent::ScoreChanged && value >= 500)
-                UnlockAchievement("ACH_WIN_ONE_GAME");
+            if (event == GameEvent::ScoreChanged)
+            {
+                auto score = owner->GetComponent<ScoreComponent>()->GetScore();
+                if (score >= 500)
+                    UnlockAchievement("ACH_WIN_ONE_GAME");
+            }
 #else
-            (void)event; (void)value;
+            (void)event; (void)owner;
 #endif
         }
-
     private:
 #if USE_STEAMWORKS
         void UnlockAchievement(const char* id)

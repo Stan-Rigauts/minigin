@@ -4,7 +4,6 @@ namespace dae
 {
     void HealthComponent::Damage(int amount)
     {
-
         if (m_Lives <= 0)
         {
             Die();
@@ -12,12 +11,11 @@ namespace dae
         else
         {
             m_Lives -= amount;
-            m_Subject.Notify(GameEvent::PlayerDamaged, m_Lives);
+            m_Subject.Notify(GameEvent::PlayerDamaged, &GetOwner());
         }
     }
-
     void HealthComponent::Die()
     {
-        m_Subject.Notify(GameEvent::PlayerDied, m_Lives);
+        m_Subject.Notify(GameEvent::PlayerDied, &GetOwner());
     }
 }

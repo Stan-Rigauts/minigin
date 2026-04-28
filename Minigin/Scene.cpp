@@ -1,3 +1,4 @@
+#include "Scene.h"
 #include <algorithm>
 #include "Scene.h"
 #include <cassert>
@@ -59,3 +60,12 @@ void Scene::Render() const
 	}
 }
 
+void dae::Scene::RemoveObjectsWithTag(const char* tag)
+{
+	m_objects.erase(
+		std::remove_if(m_objects.begin(), m_objects.end(),
+			[tag](const std::unique_ptr<GameObject>& go) {
+				return go->GetTag() == tag;
+			}),
+		m_objects.end());
+}
