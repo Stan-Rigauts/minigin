@@ -98,8 +98,13 @@ if(NOT SDL3_ttf_FOUND)
         FetchContent_MakeAvailable(SDL3_ttf)
         set(SDL3_ttf_DIR "${sdl3_ttf_SOURCE_DIR}/cmake" CACHE PATH "" FORCE)
         find_package(SDL3_ttf CONFIG REQUIRED)
-    else()
+   else()
+        unset(SDL3TTF_VENDORED CACHE)
         set(SDL3TTF_VENDORED ON CACHE BOOL "" FORCE)
+        unset(SDL3TTF_FREETYPE CACHE)
+        set(SDL3TTF_FREETYPE ON CACHE BOOL "" FORCE)
+        unset(SDL3TTF_HARFBUZZ CACHE)
+        set(SDL3TTF_HARFBUZZ OFF CACHE BOOL "" FORCE)
         FetchContent_Declare(
             SDL3_ttf
             GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
