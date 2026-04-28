@@ -43,7 +43,6 @@ if(EMSCRIPTEN)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -sUSE_FREETYPE=1")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -sUSE_FREETYPE=1")
     set(FREETYPE_INCLUDE_DIRS "${EMSCRIPTEN_SYSROOT}/include/freetype2")
-    set(FREETYPE_LIBRARY "-sUSE_FREETYPE=1")
     set(FREETYPE_FOUND TRUE)
     set(SDL3TTF_HARFBUZZ OFF CACHE INTERNAL "" FORCE)
 endif()
@@ -101,7 +100,7 @@ add_library(imgui STATIC
     ${imgui_SOURCE_DIR}/imgui_demo.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
- "Minigin/Observer.h")
+)
 target_include_directories(imgui PUBLIC
     ${imgui_SOURCE_DIR}
     ${SDL3_SOURCE_DIR}/include
@@ -109,9 +108,7 @@ target_include_directories(imgui PUBLIC
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
 target_compile_features(imgui PUBLIC cxx_std_20)
 
-# ================================================================
 # ENGINE (static library)
-# ================================================================
 add_library(Engine STATIC
     Minigin/CacheTrasher.cpp
     Minigin/Font.cpp
@@ -131,7 +128,7 @@ add_library(Engine STATIC
     Minigin/Texture2D.cpp
     Minigin/ThrashTheCacheComponent.cpp
     Minigin/Transform.cpp
- "Minigin/Observer.h")
+)
 
 target_include_directories(Engine PUBLIC
     ${CMAKE_SOURCE_DIR}/Minigin
@@ -157,9 +154,7 @@ else()
     target_compile_options(Engine PRIVATE -Wall -Wextra -Werror)
 endif()
 
-# ================================================================
 # GAME (executable)
-# ================================================================
 if(EMSCRIPTEN)
     message("Using Emscripten!")
     set(TARGET_NAME minigin_web)
@@ -177,7 +172,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
     Game/HealthComponent.cpp
     Game/PelletComponent.cpp
     Game/ScoreComponent.cpp
- "Minigin/Observer.h")
+)
 
 target_include_directories(${TARGET_NAME} PUBLIC
     ${CMAKE_SOURCE_DIR}/Game
@@ -224,7 +219,7 @@ if(EMSCRIPTEN)
     target_link_options(${TARGET_NAME} PRIVATE
         -sASYNCIFY
         -sALLOW_MEMORY_GROWTH=1
-        -sUSE_FREETYPE=1
+        "SHELL:-sUSE_FREETYPE=1"
         --preload-file ${CMAKE_SOURCE_DIR}/Data@/Data
     )
 endif()
