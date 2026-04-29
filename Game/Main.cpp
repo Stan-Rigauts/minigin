@@ -54,7 +54,19 @@ static void load()
 
     servicelocator::get_sound_system().load(SND_PELLET, "Data/pellet.wav");
 
-    // Configure manager
+
+    // Sound text
+    auto soundHintGO = std::make_unique<dae::GameObject>();
+    soundHintGO->SetLocalPosition(250.f, 20.f);
+    soundHintGO->AddComponent(std::make_unique<dae::TextComponent>(
+        *soundHintGO,
+        "Sound: collect a pellet to hear it play",
+        smallFont,
+        SDL_Color{ 255, 255, 0, 255 }
+    ));
+    scene.Add(std::move(soundHintGO));
+
+
     manager->SetScene(&scene);
     manager->SetLevels(
         { "level1.txt" },

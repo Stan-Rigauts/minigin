@@ -16,7 +16,6 @@
 #endif
 
 #include <SDL3/SDL.h>
-//#include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include "Minigin.h"
 #include "InputManager.h"
@@ -88,7 +87,7 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 
 dae::Minigin::~Minigin()
 {
-	servicelocator::register_sound_system(nullptr); // destroy sound system first
+	servicelocator::register_sound_system(nullptr); 
 
 #if USE_STEAMWORKS
 	SteamAPI_Shutdown();
