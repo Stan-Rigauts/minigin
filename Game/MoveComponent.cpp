@@ -19,6 +19,7 @@ namespace dae
 
     void MoveComponent::Update(float delta)
     {
+        if (m_Frozen) return;
         m_Delta = delta;
 
         if (!m_Grid) return;

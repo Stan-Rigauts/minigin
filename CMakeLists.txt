@@ -128,7 +128,7 @@ add_library(Engine STATIC
     Minigin/Texture2D.cpp
     Minigin/ThrashTheCacheComponent.cpp
     Minigin/Transform.cpp
-)
+ )
 
 target_include_directories(Engine PUBLIC
     ${CMAKE_SOURCE_DIR}/Minigin
@@ -144,6 +144,7 @@ target_link_libraries(Engine PUBLIC
     SDL3_ttf::SDL3_ttf
     SDL3_mixer::SDL3_mixer
     imgui
+    glm::glm
 )
 
 target_compile_features(Engine PUBLIC cxx_std_20)
@@ -172,7 +173,18 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
     Game/HealthComponent.cpp
     Game/PelletComponent.cpp
     Game/ScoreComponent.cpp
-)
+    Game/GhostState.h 
+    Game/ChaseState.h
+    Game/ChaseState.cpp 
+    Game/ScatterState.h
+    Game/ScatterState.cpp
+    Game/FrightenedState.h
+    Game/FrightenedState.cpp
+    Game/DeadState.h 
+    Game/DeadState.cpp 
+    Game/Ghost.h
+    Game/Ghost.cpp
+ )
 
 target_include_directories(${TARGET_NAME} PUBLIC
     ${CMAKE_SOURCE_DIR}/Game

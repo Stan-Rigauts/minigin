@@ -10,8 +10,7 @@ namespace dae
     class PelletComponent final : public Component
     {
     public:
-        PelletComponent(GameObject& owner, GameManagerComponent* manager,
-            std::vector<GameObject*> players,
+        PelletComponent(GameObject& owner, GameManagerComponent* manager,std::vector<GameObject*> players,
             bool isPowerPellet = false,
             float pickupRadius = 8.f);
 

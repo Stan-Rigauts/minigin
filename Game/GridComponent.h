@@ -24,7 +24,16 @@ namespace dae
         {
             int col = static_cast<int>((worldX - m_OffsetX) / m_TileSize);
             int row = static_cast<int>((worldY - m_OffsetY) / m_TileSize);
-            return GetTile(col, row) == TileType::Wall;
+
+            TileType tile = GetTile(col, row);
+
+            if (tile == TileType::Wall)
+                return true;
+
+            if (tile == TileType::GhostDoor)
+                return m_DoorLocked;
+
+            return false;
         }
 
         TileType GetTile(int col, int row) const
@@ -60,7 +69,10 @@ namespace dae
         int GetOffsetY()  const { return m_OffsetY; }
         int GetCols()     const { return m_Cols; }
         int GetRows()     const { return m_Rows; }
-
+        void SetDoorLocked(bool locked)
+        {
+            m_DoorLocked = locked;
+        }
     private:
         std::vector<std::vector<TileType>> m_Grid;
         int m_Cols{};
@@ -68,5 +80,6 @@ namespace dae
         int m_TileSize{};
         int m_OffsetX{};
         int m_OffsetY{};
+        bool m_DoorLocked{ false };
     };
 }

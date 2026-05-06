@@ -136,15 +136,15 @@ struct sdl_sound_system::impl
 
     void process_loop()
     {
-        for (;;)
+        while(true)
         {
             sound_event evt{};
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                cv.wait(lock, [this] { return !event_queue.empty(); });
-                evt = std::move(event_queue.front());
-                event_queue.pop();
-            }
+
+            std::unique_lock<std::mutex> lock{mutex};
+            cv.wait(lock, [this] { return !event_queue.empty(); });
+            evt = std::move(event_queue.front());
+            event_queue.pop();
+            
 
             switch (evt.type)
             {

@@ -17,6 +17,7 @@
 #include "PlayerControllerComponent.h"
 #include "servicelocator.h"
 #include "SoundIds.h"
+
 #include "Command.h" 
 #include <iostream>
 #include <string>
@@ -25,6 +26,7 @@ dae::GameManagerComponent::GameManagerComponent(GameObject& owner)
     : Component(owner)
 {
 }
+
 
 void dae::GameManagerComponent::SetScene(Scene* scene)
 {
@@ -54,6 +56,34 @@ void dae::GameManagerComponent::StartGame(GameMode mode)
     LoadLevel(0);
 }
     
+void dae::GameManagerComponent::Update(float deltaTime)
+{
+    if (m_Players.empty()) return;
+
+    if (m_PowerPelletTimer > 0.f)
+    {
+        m_PowerPelletTimer -= deltaTime;
+        if (m_PowerPelletTimer <= 0.f)
+            for (auto* ghost : m_Ghosts)
+                ghost->SetPowerPelletActive(false);
+    }
+
+    if (m_DeathPauseTimer > 0.f)
+    {
+        m_DeathPauseTimer -= deltaTime;
+        if (m_DeathPauseTimer <= 0.f)
+            SetGameFrozen(false);
+        return;
+    }
+
+    auto pacPos = m_Players[0].go->GetLocalPosition();
+    for (auto* ghost : m_Ghosts)
+        ghost->SetPacManPosition({ pacPos.x, pacPos.y });
+
+    CheckGhostPacManCollision();
+}
+
+
 void dae::GameManagerComponent::PelletCollected()
 {
     servicelocator::get_sound_system().play(SND_PELLET, 1.0f); 
@@ -86,6 +116,15 @@ void dae::GameManagerComponent::EnterScoreBoard()
     BuildScoreBoard();
 }
 
+void dae::GameManagerComponent::SetGameFrozen(bool frozen)
+{
+    for (auto* ghost : m_Ghosts)
+        ghost->SetFrozen(frozen);
+
+    for (auto& player : m_Players)
+        if (player.move)
+            player.move->SetFrozen(frozen);
+}
 
 int dae::GameManagerComponent::CountPellets(const MapInfo& map) const
 {
@@ -96,6 +135,49 @@ int dae::GameManagerComponent::CountPellets(const MapInfo& map) const
                 map.grid[r][c] == TileType::PowerPellet)
                 ++count;
     return count;
+}
+
+void dae::GameManagerComponent::PowerPelletCollected()
+{
+    m_PowerPelletTimer = POWER_PELLET_DURATION;
+    for (auto* ghost : m_Ghosts)
+        ghost->SetPowerPelletActive(true);
+}
+
+void dae::GameManagerComponent::CheckGhostPacManCollision()
+{
+    if (m_Players.empty() || m_PlayerDying) return;
+
+    constexpr float COLLISION_RADIUS = 10.f;
+
+    for (int pi = 0; pi < static_cast<int>(m_Players.size()); ++pi)
+    {
+        auto& player = m_Players[pi];
+        auto pacPos = player.go->GetLocalPosition();
+        glm::vec2 pacVec{ pacPos.x, pacPos.y };
+
+        for (auto* ghost : m_Ghosts)
+        {
+            float dist = glm::length(ghost->GetPosition() - pacVec);
+            if (dist > COLLISION_RADIUS) continue;
+
+            if (ghost->IsPowerPelletActive())
+            {
+                // PacMan eats ghost
+                ghost->SetEatenByPacMan(true);
+                player.score->AddScore(200);
+                servicelocator::get_sound_system().play(SND_PELLET, 1.0f);
+            }
+            else if (!ghost->IsEatenByPacMan())
+            {
+                m_DeathPauseTimer = DEATH_PAUSE_DURATION;
+                SetGameFrozen(true);
+                player.health->Damage();
+                PlayerDied(pi);
+                return;
+            }
+        }
+    }
 }
 
 void dae::GameManagerComponent::ClearLevelObjects()
@@ -160,7 +242,9 @@ void dae::GameManagerComponent::LoadLevel(int index)
     else
         ResetPlayers(mapInfo, gridPtr);
 
+    SpawnGhosts(gridPtr);
     SpawnPellets(mapInfo, gridPtr);
+
 
     std::cout << "Loaded level " << index + 1
         << " (" << m_RemainingPellets << " pellets)\n";
@@ -179,7 +263,7 @@ void dae::GameManagerComponent::SpawnPlayers(const MapInfo& mapInfo, GridCompone
     const int mazeOffsetX = (WINDOW_W - mapInfo.cols * TILE_SIZE) / 2;
     const int mazeOffsetY = (WINDOW_H - mapInfo.rows * TILE_SIZE) / 2;
 
-    const int spawnRow = mapInfo.rows / 2;
+    const int spawnRow = (mapInfo.rows / 2)+2;
     const int spawnCol = mapInfo.cols / 2;
 
     // Player 1
@@ -418,4 +502,110 @@ void dae::GameManagerComponent::BuildScoreBoard()
     input.BindCommand(ControllerButton::A,
         std::make_unique<RestartCommand>(this, m_GameMode),
         InputTriggerType::OnPressed);
+}
+
+
+void dae::GameManagerComponent::SpawnGhosts(GridComponent* grid)
+{
+    const float MAP_W = static_cast<float>(grid->GetCols() * grid->GetTileSize() + grid->GetOffsetX());
+    const float MAP_H = static_cast<float>(grid->GetRows() * grid->GetTileSize() + grid->GetOffsetY());
+
+    auto TileToWorld = [&](int row, int col)
+        {
+            const int ts = grid->GetTileSize();
+
+            float x = static_cast<float>(grid->GetOffsetX() + col * ts + ts / 2.f);
+            float y = static_cast<float>(grid->GetOffsetY() + row * ts + ts / 2.f);
+
+            return glm::vec2{ x, y };
+        };
+
+    struct GhostDesc
+    {
+        Ghost::Type type;
+        const char* chaseSprite;
+        const char* frightenedSprite;
+        const char* eyesSprite;
+
+        int row;
+        int col;
+
+        glm::vec2 scatterCorner;
+    };
+
+    const int centerRow = grid->GetRows() / 2;
+    const int centerCol = grid->GetCols() / 2;
+
+    const GhostDesc descs[] =
+    {
+        // Blinky
+        {
+            Ghost::Type::Blinky,
+            "RedGhost.png", "FreightenedGhost.png", "DeadEyesGhosts.png",
+            centerRow - 3, centerCol,
+            { MAP_W - 16.f, 16.f }
+        },
+        // Pinky
+        {
+            Ghost::Type::Pinky,
+            "PinkGhost.png", "FreightenedGhost.png", "DeadEyesGhosts.png",
+            centerRow, centerCol - 1,
+            { 16.f, 16.f }
+        },
+        // Inky
+        {
+            Ghost::Type::Inky,
+            "CyanGhost.png", "FreightenedGhost.png", "DeadEyesGhosts.png",
+            centerRow, centerCol,
+            { MAP_W - 16.f, MAP_H - 16.f }
+        },
+        // Clyde
+        {
+            Ghost::Type::Clyde,
+            "OrangeGhost.png", "FreightenedGhost.png", "DeadEyesGhosts.png",
+            centerRow, centerCol + 1,
+            { 16.f, MAP_H - 16.f }
+        },
+    };
+
+    m_Ghosts.clear();
+
+    for (const auto& desc : descs)
+    {
+        auto go = std::make_unique<dae::GameObject>();
+        auto ghostComponent = std::make_unique<Ghost>(*go);
+        Ghost* ghost = ghostComponent.get();
+
+        ghost->SetType(desc.type);
+        ghost->SetGrid(grid);
+
+        glm::vec2 worldPos = TileToWorld(desc.row, desc.col);
+
+        ghost->SetStartPosition(worldPos);
+        ghost->SetScatterTarget(desc.scatterCorner);
+       
+        
+        
+  
+        ghost->SetChaseSprite(desc.chaseSprite);
+        ghost->SetFrightenedSprite(desc.frightenedSprite);
+        ghost->SetEyesSprite(desc.eyesSprite);
+
+        go->SetLocalPosition(worldPos.x, worldPos.y);
+
+        m_Ghosts.push_back(ghost);
+
+        go->AddComponent(std::move(ghostComponent));
+        go->SetTag(TAG_LEVEL);
+
+        auto render = std::make_unique<RenderComponent>(*go);
+        render->SetTexture(desc.chaseSprite);
+        render->SetSize(16, 16);
+        render->SetSourceRect(0, 0, 16, 16);
+        go->AddComponent(std::move(render));
+
+        m_pScene->Add(std::move(go));
+
+        ghost->Start();
+    }
 }

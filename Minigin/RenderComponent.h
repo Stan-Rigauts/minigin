@@ -58,18 +58,33 @@ namespace dae
             m_useSrcRect = false;
         }
 
+        void SetCentered(bool centered)
+        {
+            m_Centered = centered;
+        }
+
         void Render() const override
         {
             auto pos = GetOwner().GetWorldPosition();
             auto& renderer = Renderer::GetInstance();
 
+            float drawX = pos.x;
+            float drawY = pos.y;
+
+            
+            if (m_Centered)
+            {
+                drawX -= m_width * 0.5f;
+                drawY -= m_height * 0.5f;
+            }
+
             if (m_useColor)
             {
                 SDL_FRect rect{
-                    pos.x,
-                    pos.y,
-                    static_cast<float>(m_width),
-                    static_cast<float>(m_height)
+                    drawX,
+                    drawY,
+                    m_width,
+                    m_height
                 };
 
                 SDL_SetRenderDrawColor(
@@ -91,25 +106,26 @@ namespace dae
                     renderer.RenderTexture(
                         *m_texture,
                         m_srcRect,
-                        pos.x,
-                        pos.y,
-                        static_cast<float>(m_width),
-                        static_cast<float>(m_height)
+                        drawX,
+                        drawY,
+                        m_width,
+                        m_height
                     );
                 }
                 else
                 {
                     renderer.RenderTexture(
                         *m_texture,
-                        pos.x,
-                        pos.y,
-                        static_cast<float>(m_width),
-                        static_cast<float>(m_height)
+                        drawX,
+                        drawY,
+                        m_width,
+                        m_height
                     );
                 }
             }
         }
 
+        
     private:
 
         std::shared_ptr<Texture2D> m_texture{};
@@ -122,5 +138,7 @@ namespace dae
 
         float m_width{ 16 };
         float m_height{ 16 };
+        bool m_Centered = false;
+
     };
 }

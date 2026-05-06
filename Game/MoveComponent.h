@@ -17,12 +17,13 @@ namespace dae
         void Move(float dirX, float dirY);
         void SetGrid(GridComponent* grid) { m_Grid = grid; }
         void SetGameManager(GameManagerComponent* manager){m_GameManager = manager;}
-
+        void SetFrozen(bool f) { m_Frozen = f; }
     private:
         bool IsAlignedToGrid() const;
         bool CanMove(float dirX, float dirY) const;
         void SnapToGrid();
 
+        bool m_Frozen{ false };
         float m_Speed{};
         float m_Delta{};
         glm::vec2 m_CurrentDir{ 0.f, 0.f };

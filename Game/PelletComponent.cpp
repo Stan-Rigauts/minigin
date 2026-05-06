@@ -37,10 +37,13 @@ namespace dae
             {
                 m_Collected = true;
                 GetOwner().MarkForDestroy();
-
                 if (m_GameManager)
-                    m_GameManager->PelletCollected();
+                {
+                    if (m_IsPowerPellet)
+                        m_GameManager->PowerPelletCollected();
 
+                    m_GameManager->PelletCollected();
+                }
                 return;
             }
         }

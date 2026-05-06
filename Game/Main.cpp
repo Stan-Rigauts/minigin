@@ -73,7 +73,7 @@ static void load()
         { "Level1.png" }
     );
 
-    manager->StartGame(dae::GameMode::Duo);
+    manager->StartGame(dae::GameMode::Solo);
 }
 
 int main(int, char* [])

@@ -3,6 +3,7 @@
 #include "GameState.h"
 #include <vector>
 #include <string>
+#include "Ghost.h"
 
 namespace dae
 {
@@ -14,6 +15,7 @@ namespace dae
     class TextComponent;
     struct MapInfo;
 
+
     class GameManagerComponent final : public Component
     {
     public:
@@ -24,6 +26,7 @@ namespace dae
             const std::vector<std::string>& levelTextures);
 
         void StartGame(GameMode mode);
+        void Update(float);
         void PelletCollected();
         void PlayerDied(int playerIndex);
 
@@ -32,6 +35,8 @@ namespace dae
         int       GetCurrentLevel() const { return m_CurrentLevel; }
 
         void EnterScoreBoard();
+        void SetGameFrozen(bool frozen);
+        void PowerPelletCollected();
     private:
         void LoadLevel(int index);
         void LoadNextLevel();
@@ -41,7 +46,14 @@ namespace dae
         void SpawnPellets(const MapInfo& mapInfo, GridComponent* grid);
         void ClearPlayers();
         void BuildScoreBoard();
+        void SpawnGhosts(GridComponent* grid);
         int  CountPellets(const MapInfo& map) const;
+
+
+        void CheckGhostPacManCollision();
+        bool m_PlayerDying{ false };
+
+
 
         Scene* m_pScene = nullptr;
 
@@ -52,6 +64,7 @@ namespace dae
         GameMode  m_GameMode = GameMode::Solo;
         int       m_CurrentLevel = 0;
         int       m_RemainingPellets = 0;
+        std::vector<Ghost*> m_Ghosts;
 
         struct PlayerEntry
         {
@@ -63,6 +76,12 @@ namespace dae
             int spawnCol = 0;
         };
         std::vector<PlayerEntry> m_Players;
+
+		float m_DeathPauseTimer = 0.f;
+        static constexpr float DEATH_PAUSE_DURATION = 2.f;
+
+        float m_PowerPelletTimer{ 0.f };
+        static constexpr float POWER_PELLET_DURATION{ 8.f };
 
         static constexpr const char* TAG_LEVEL = "level_object";
         static constexpr const char* TAG_PLAYER = "player_object";

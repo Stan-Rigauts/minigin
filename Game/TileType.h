@@ -8,8 +8,6 @@ namespace dae
         Wall,
         Pellet,
         PowerPellet,
-        GhostDoor,
-        PlayerSpawn,
-        GhostSpawn
+        GhostDoor
     };
 }

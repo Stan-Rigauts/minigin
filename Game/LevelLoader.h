@@ -57,8 +57,6 @@ namespace dae
                     case '.': row.push_back(TileType::Pellet);      break;
                     case 'o': row.push_back(TileType::PowerPellet); break;
                     case '-': row.push_back(TileType::GhostDoor);   break;
-                    case 'P': row.push_back(TileType::PlayerSpawn); break;
-                    case 'G': row.push_back(TileType::GhostSpawn);  break;
                     case 'e':  row.push_back(TileType::Empty);      break;
                     default:  row.push_back(TileType::Empty);       break;
                     }
