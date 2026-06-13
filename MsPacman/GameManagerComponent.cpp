@@ -19,8 +19,6 @@
 #include "TextComponent.h"
 #include <string>
 
-#define NOMINMAX
-#include <Windows.h>
 
 dae::GameManagerComponent::GameManagerComponent(GameObject& owner)
     : Component(owner)
@@ -196,10 +194,7 @@ void dae::GameManagerComponent::PelletCollected(int playerIndex)
 
     --m_RemainingPellets;
 
-    {
-        std::string msg = "Pellet collected! Remaining: " + std::to_string(m_RemainingPellets) + "\n";
-        OutputDebugStringA(msg.c_str());
-    }
+   
 
     if (m_RemainingPellets <= 0)
         LoadNextLevel();
