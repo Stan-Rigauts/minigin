@@ -3,7 +3,7 @@
 #include "GameState.h"
 #include "GameManagerComponent.h"
 #include "NameEntryComponent.h"
-#include "ServiceLocator.h"
+#include "serviceLocator.h"
 
 namespace dae
 {
