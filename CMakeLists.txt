@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(Minigin)
+project(MsPacman)
 cmake_policy(SET CMP0144 NEW)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -75,14 +75,26 @@ set(SDL3MIXER_MP3 OFF CACHE BOOL "" FORCE)
 set(SDL3MIXER_FLAC OFF CACHE BOOL "" FORCE)
 set(SDL3MIXER_MOD OFF CACHE BOOL "" FORCE)
 
-FetchContent_Declare(
-    SDL3_mixer
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
-    GIT_TAG main
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(SDL3_mixer)
-
+find_package(SDL3_mixer 3.2.0 CONFIG QUIET)
+if(NOT SDL3_mixer_FOUND)
+    if(WIN32)
+        FetchContent_Declare(
+            SDL3_mixer
+            URL https://www.libsdl.org/projects/SDL_mixer/release/SDL3_mixer-devel-3.2.0-VC.zip
+        )
+        FetchContent_MakeAvailable(SDL3_mixer)
+        set(SDL3_mixer_DIR "${sdl3_mixer_SOURCE_DIR}/cmake" CACHE PATH "" FORCE)
+        find_package(SDL3_mixer CONFIG REQUIRED)
+    else()
+        FetchContent_Declare(
+            SDL3_mixer
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+            GIT_TAG release-3.2.0
+            GIT_SHALLOW TRUE
+        )
+        FetchContent_MakeAvailable(SDL3_mixer)
+    endif()
+endif()
 # IMGUI
 FetchContent_Declare(
     imgui
@@ -110,28 +122,53 @@ target_compile_features(imgui PUBLIC cxx_std_20)
 
 # ENGINE (static library)
 add_library(Engine STATIC
-    Minigin/CacheTrasher.cpp
-    Minigin/Font.cpp
-    Minigin/FPSComponent.cpp
-    Minigin/GameObject.cpp
-    Minigin/imgui_plot.cpp
-    Minigin/InputManager.cpp
-    Minigin/Minigin.cpp
-    Minigin/Renderer.cpp
-    Minigin/ResourceManager.cpp
-    Minigin/Scene.cpp
-    Minigin/SceneManager.cpp
-    Minigin/sdl_sound_system.cpp
-    Minigin/servicelocator.cpp
-    Minigin/Subject.cpp
-    Minigin/TextComponent.cpp
-    Minigin/Texture2D.cpp
-    Minigin/ThrashTheCacheComponent.cpp
-    Minigin/Transform.cpp
- )
+    Engine/CacheTrasher.cpp
+    Engine/CacheTrasher.h
+    Engine/Font.cpp
+    Engine/Font.h
+    Engine/FPSComponent.cpp
+    Engine/FPSComponent.h
+    Engine/GameObject.cpp
+    Engine/GameObject.h
+    Engine/imgui_plot.cpp
+    Engine/imgui_plot.h
+    Engine/InputManager.cpp
+    Engine/InputManager.h
+    Engine/Minigin.cpp
+    Engine/Minigin.h
+    Engine/null_sound_system.h
+    Engine/Observer.h
+    Engine/Renderer.cpp
+    Engine/Renderer.h
+    Engine/ResourceManager.cpp
+    Engine/ResourceManager.h
+    Engine/RotatorComponent.h
+    Engine/Scene.cpp
+    Engine/Scene.h
+    Engine/SceneManager.cpp
+    Engine/SceneManager.h
+    Engine/sdl_sound_system.cpp
+    Engine/sdl_sound_system.h
+    Engine/servicelocator.cpp
+    Engine/servicelocator.h
+    Engine/Singleton.h
+    Engine/sound_system.h
+    Engine/Subject.cpp
+    Engine/Subject.h
+    Engine/TextComponent.cpp
+    Engine/TextComponent.h
+    Engine/Texture2D.cpp
+    Engine/Texture2D.h
+    Engine/ThrashTheCacheComponent.cpp
+    Engine/ThrashTheCacheComponent.h
+    Engine/Transform.cpp
+    Engine/Transform.h
+    Engine/BaseCommand.h
+    Engine/Component.h
+)
 
 target_include_directories(Engine PUBLIC
-    ${CMAKE_SOURCE_DIR}/Minigin
+    ${CMAKE_SOURCE_DIR}/Engine
     ${glm_SOURCE_DIR}
     ${SDL3_SOURCE_DIR}/include
     ${SDL3_ttf_SOURCE_DIR}/include
@@ -161,33 +198,56 @@ if(EMSCRIPTEN)
     set(TARGET_NAME minigin_web)
     set(TARGET_PARAM "")
 else()
-    set(TARGET_NAME minigin)
+    set(TARGET_NAME MsPacman)
     set(TARGET_PARAM WIN32)
 endif()
 
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
-    Game/Main.cpp
-    Game/Command.cpp
-    Game/MoveComponent.cpp
-    Game/GameManagerComponent.cpp
-    Game/HealthComponent.cpp
-    Game/PelletComponent.cpp
-    Game/ScoreComponent.cpp
-    Game/GhostState.h 
-    Game/ChaseState.h
-    Game/ChaseState.cpp 
-    Game/ScatterState.h
-    Game/ScatterState.cpp
-    Game/FrightenedState.h
-    Game/FrightenedState.cpp
-    Game/DeadState.h 
-    Game/DeadState.cpp 
-    Game/Ghost.h
-    Game/Ghost.cpp
- )
+    MsPacman/Main.cpp
+    MsPacman/Command.cpp
+    MsPacman/Command.h
+    MsPacman/MoveComponent.cpp
+    MsPacman/MoveComponent.h
+    MsPacman/GameManagerComponent.cpp
+    MsPacman/GameManagerComponent.h
+    MsPacman/HealthComponent.cpp
+    MsPacman/HealthComponent.h
+    MsPacman/PelletComponent.cpp
+    MsPacman/PelletComponent.h
+    MsPacman/ScoreComponent.cpp
+    MsPacman/ScoreComponent.h
+    MsPacman/GhostState.h
+    MsPacman/ChaseState.h
+    MsPacman/ChaseState.cpp
+    MsPacman/ScatterState.h
+    MsPacman/ScatterState.cpp
+    MsPacman/FrightenedState.h
+    MsPacman/FrightenedState.cpp
+    MsPacman/DeadState.h
+    MsPacman/DeadState.cpp
+    MsPacman/ExitHouseState.h
+    MsPacman/Ghost.h
+    MsPacman/Ghost.cpp
+    MsPacman/SpriteAnimatorComponent.h
+    MsPacman/SpriteAnimatorComponent.cpp
+    MsPacman/GameState.h
+    MsPacman/GameEvent.h
+    MsPacman/GridComponent.h
+    MsPacman/HighScoreManager.h
+    MsPacman/LevelLoader.h
+    MsPacman/LivesDisplayComponent.h
+    MsPacman/NameEntryComponent.cpp
+    MsPacman/NameEntryComponent.h
+    MsPacman/Observer.h
+    MsPacman/PlayerControllerComponent.h
+    MsPacman/ScoreDisplayComponent.h
+    MsPacman/SoundIds.h
+    MsPacman/SteamAchievementsObserver.h
+    MsPacman/TileType.h
+)
 
 target_include_directories(${TARGET_NAME} PUBLIC
-    ${CMAKE_SOURCE_DIR}/Game
+    ${CMAKE_SOURCE_DIR}/MsPacman
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE
