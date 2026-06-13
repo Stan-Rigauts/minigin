@@ -9,8 +9,8 @@ namespace dae
         std::function<void(const std::string&, int)> onConfirm)
         : Component(owner)
         , m_Score(score)
-        , m_pTextComponent(textComponent)                    
         , m_OnConfirm(std::move(onConfirm))
+        , m_pTextComponent(textComponent)                    
     {
         m_Letters.fill(0);
         UpdateDisplayText();
