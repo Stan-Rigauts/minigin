@@ -579,10 +579,10 @@ void dae::GameManagerComponent::SpawnPlayers(const MapInfo& mapInfo, GridCompone
         auto pacAnim1 = std::make_unique<SpriteAnimatorComponent>(*p1, 16, 16);
         pacAnim1->SetBaseTexture("MSPacmanSprite.png");
         pacAnim1->SetRenderSize(24.f, 24.f);
-        pacAnim1->AddAnimation({ "walk_right", 0, 2, 0, 0.1f, true });
-        pacAnim1->AddAnimation({ "walk_left",  0, 2, 1, 0.1f, true });
-        pacAnim1->AddAnimation({ "walk_up",    0, 2, 2, 0.1f, true });
-        pacAnim1->AddAnimation({ "walk_down",  0, 2, 3, 0.1f, true });
+        pacAnim1->AddAnimation({ "walk_right", 0, 2, 0, 0.1f, true, {} });
+        pacAnim1->AddAnimation({ "walk_left",  0, 2, 1, 0.1f, true, {} });
+        pacAnim1->AddAnimation({ "walk_up",    0, 2, 2, 0.1f, true, {} });
+        pacAnim1->AddAnimation({ "walk_down",  0, 2, 3, 0.1f, true, {} });
         auto* pacAnimPtr1 = pacAnim1.get();
         p1->AddComponent(std::move(pacAnim1));
 
@@ -723,10 +723,10 @@ void dae::GameManagerComponent::SpawnPlayers(const MapInfo& mapInfo, GridCompone
         auto pacAnim2 = std::make_unique<SpriteAnimatorComponent>(*p2, 16, 16);
         pacAnim2->SetBaseTexture("MSPacmanSprite.png");
         pacAnim2->SetRenderSize(24.f, 24.f);
-        pacAnim2->AddAnimation({ "walk_right", 0, 2, 0, 0.1f, true });
-        pacAnim2->AddAnimation({ "walk_left",  0, 2, 1, 0.1f, true });
-        pacAnim2->AddAnimation({ "walk_up",    0, 2, 2, 0.1f, true });
-        pacAnim2->AddAnimation({ "walk_down",  0, 2, 3, 0.1f, true });
+        pacAnim2->AddAnimation({ "walk_right", 0, 2, 0, 0.1f, true, {} });
+        pacAnim2->AddAnimation({ "walk_left",  0, 2, 1, 0.1f, true, {} });
+        pacAnim2->AddAnimation({ "walk_up",    0, 2, 2, 0.1f, true, {} });
+        pacAnim2->AddAnimation({ "walk_down",  0, 2, 3, 0.1f, true, {} });
         auto* pacAnimPtr2 = pacAnim2.get();
         p2->AddComponent(std::move(pacAnim2));
 
@@ -1063,19 +1063,16 @@ void dae::GameManagerComponent::SpawnGhosts(GridComponent* grid)
         animator->SetBaseTexture(desc.chaseSprite);
         animator->SetRenderSize(28.f, 28.f);
 
-        dae::Animation walkRight{ "walk_right", 0, 1, 0, 0.15f, true };
-        dae::Animation walkLeft{ "walk_left",  2, 3, 0, 0.15f, true };
-        dae::Animation walkUp{ "walk_up",    4, 5, 0, 0.15f, true };
-        dae::Animation walkDown{ "walk_down",  6, 7, 0, 0.15f, true };
-
-        dae::Animation frightened{ "frightened", 0, 1, 0, 0.15f, true };
-
-        dae::Animation white{ "white", 0, 1, 0, 0.15f, true };
-
-        dae::Animation eyesRight{ "eyes_right", 0, 0, 0, 0.15f, false };
-        dae::Animation eyesLeft{ "eyes_left",  1, 1, 0, 0.15f, false };
-        dae::Animation eyesUp{ "eyes_up",    2, 2, 0, 0.15f, false };
-        dae::Animation eyesDown{ "eyes_down",  3, 3, 0, 0.15f, false };
+        dae::Animation walkRight{ "walk_right", 0, 1, 0, 0.15f, true, {} };
+        dae::Animation walkLeft{ "walk_left",  2, 3, 0, 0.15f, true, {} };
+        dae::Animation walkUp{ "walk_up",    4, 5, 0, 0.15f, true, {} };
+        dae::Animation walkDown{ "walk_down",  6, 7, 0, 0.15f, true, {} };
+        dae::Animation frightened{ "frightened", 0, 1, 0, 0.15f, true, {} };
+        dae::Animation white{ "white", 0, 1, 0, 0.15f, true, {} };
+        dae::Animation eyesRight{ "eyes_right", 0, 0, 0, 0.15f, false, {} };
+        dae::Animation eyesLeft{ "eyes_left",  1, 1, 0, 0.15f, false, {} };
+        dae::Animation eyesUp{ "eyes_up",    2, 2, 0, 0.15f, false, {} };
+        dae::Animation eyesDown{ "eyes_down",  3, 3, 0, 0.15f, false, {} };
 
         animator->AddAnimation(walkRight);
         animator->AddAnimation(walkLeft);
